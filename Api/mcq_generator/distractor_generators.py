@@ -1,6 +1,6 @@
-import nlp2go
-import spacy
-from sense2vec import Sense2VecComponent
+# import nlp2go
+# import spacy
+# from sense2vec import Sense2VecComponent
 import requests
 import json
 from typing import List
@@ -15,19 +15,19 @@ class DistractorGenerator:
     def generate_distractors(self, question : str, answer : str):
         pass
 
-class BertDistractorGenerator(DistractorGenerator):
+# class BertDistractorGenerator(DistractorGenerator):
     
-    def __init__(self, BDG_model_path : str, BDG_ANPM_model_path : str, BDG_PM_model_path : str):
-        self.bdg = nlp2go.Model(model_path = BDG_model_path)
-        self.bdg_anpm = nlp2go.Model(model_path = BDG_ANPM_model_path)
-        self.bdg_pm = nlp2go.Model(model_path = BDG_PM_model_path)
-    def generate_distractors(self, text : str, question : str, answer : str):
-        temp = {'input' : text + ' [SEP] ' + question + ' [SEP] ' + answer}
-        res = []
-        res += self.bdg.predict(temp)['result']
-        res += self.bdg_anpm.predict(temp)['result']
-        res += self.bdg_pm.predict(temp)['result']
-        return res
+#     def __init__(self, BDG_model_path : str, BDG_ANPM_model_path : str, BDG_PM_model_path : str):
+#         self.bdg = nlp2go.Model(model_path = BDG_model_path)
+#         self.bdg_anpm = nlp2go.Model(model_path = BDG_ANPM_model_path)
+#         self.bdg_pm = nlp2go.Model(model_path = BDG_PM_model_path)
+#     def generate_distractors(self, text : str, question : str, answer : str):
+#         temp = {'input' : text + ' [SEP] ' + question + ' [SEP] ' + answer}
+#         res = []
+#         res += self.bdg.predict(temp)['result']
+#         res += self.bdg_anpm.predict(temp)['result']
+#         res += self.bdg_pm.predict(temp)['result']
+#         return res
 
 # class Sense2VecDistractorGenerator(DistractorGenerator):
 

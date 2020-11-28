@@ -16,5 +16,10 @@ pip install -r requirements.txt
 ..2.3. Download punkt using
 ```
 python3 -m nltk.downloader punkt
+python3 -m nltk.downloader popular
+```
+..2.4. Download spacy en_core_web_lg using
+```
+python3 -m spacy download en_core_web_lg
 ```
 3. Run the api and the frontend.

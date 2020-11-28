@@ -3,3 +3,5 @@ torchvision==0.8.1
 torchaudio==0.7.0
 nlp2go==0.3.2
 nltk==3.5
+sense2vec==1.0.2
+neuralcoref==4.0.0

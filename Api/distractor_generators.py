@@ -68,19 +68,20 @@ class Sense2VecDistractorGenerator(DistractorGenerator):
         'Sec-Fetch-Dest': 'empty',
         'Accept-Language': 'en-GB,en-US;q=0.9,en;q=0.8'
         }
+        self.st = list(string.punctuation)
+        self.st += nltk.corpus.stopwords.words("english")
+        self.l = ["CD","FW","JJ","NN","NNS","NNP","NNPS","POS","RB","RP","VB","VBD","VBG","VBN","VBP","VBZ"]
     
     def _preprocess(self, text : str) -> str:
-        # TODO : do some removing Stopwords.
-        l=["CD","FW","JJ","NN","NNS","NNP","NNPS","POS","RB","RP","VB","VBD","VBG","VBN","VBP","VBZ"]
-        if(len(text.split())>1):
+        
+        if len(text.split())>1 :
             ind = text.find(",")
             text = text[:ind if ind >=0 else len(text)].split()
-            st = list(string.punctuation)
-            st += nltk.corpus.stopwords.words("english")
-            text = ' '.join(filter(lambda x : x not in st,text))
+
+            text = ' '.join(filter(lambda x : x not in self.st,text))
             tokens = nltk.word_tokenize(text)
-            res=nltk.pos_tag(tokens)
-            ans = list(filter(lambda x : x[1] in l,res))
+            res = nltk.pos_tag(tokens)
+            ans = list(filter(lambda x : x[1] in self.l,res))
             ans = ' '.join(map(lambda x : x[0], ans))
             ans = ans.strip()
             return ans
@@ -89,7 +90,8 @@ class Sense2VecDistractorGenerator(DistractorGenerator):
         # return ' '.join(text.split()).strip()
     
     def _postprocess(self, distractors : List[str], answer : str, limit : int = 3) -> List[str] :
-        
+        # TODO shuffle the distractors ?
+        # TODO code this function better
         return list(set(list(filter(lambda x : answer.lower().strip() not in x.lower().strip(), distractors))))[:limit]
 
     def generate_distractors(self, question : str, answer : str, limit : int = 3) -> List[str]:

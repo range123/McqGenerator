@@ -34,9 +34,11 @@ class T5QuestionAnswerGenerator(QuestionAnswerGenerator):
 
         return text
 
-    def generate_question_answer(self, text : str):
+    def generate_question_answer(self, text : str, max_questions : int = None):
         preprocessed_text = self._preprocess(text)
-        return self.model(preprocessed_text)
+        result = self.model(preprocessed_text)
+        return result[:max_questions]
+
 
 class T5QuestionGenerator(QuestionGenerator):
     def __init__(self, model_path : str):

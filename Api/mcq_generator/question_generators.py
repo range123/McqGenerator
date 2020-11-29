@@ -24,10 +24,14 @@ class T5QuestionAnswerGenerator(QuestionAnswerGenerator):
     def _preprocess(self, text : str) -> str:
         # TODO : do pronoun resolution
         text = ' '.join(text.split())
+        '''For pronoun resolution '''
         # doc = self.nlp(text)
         # print(doc)
         # resolved_coref = doc._.coref_resolved
         # return resolved_coref.lower()
+
+        text = text.lower() # The model seems to internally lowercase the text which causes some indexing issues in the pipeline
+
         return text
 
     def generate_question_answer(self, text : str):

@@ -18,7 +18,7 @@ pip install -r requirements.txt
 python3 -m nltk.downloader punkt
 python3 -m nltk.downloader popular
 ```
-..2.4. Download spacy en_core_web_lg using
+..2.4.(Optional) Install spacy and Download spacy en_core_web_lg using (used for pronoun resolution)
 ```
 python3 -m spacy download en_core_web_lg
 ```

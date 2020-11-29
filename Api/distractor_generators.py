@@ -89,16 +89,33 @@ class Sense2VecDistractorGenerator(DistractorGenerator):
             return text
         # return ' '.join(text.split()).strip()
     
+    def _stemming_filter(self, distractors : List[str], answer : str):
+        res = []
+        ps = nltk.stem.PorterStemmer()
+        answer_tok = ' '.join(map(lambda x : ps.stem(x).lower(), nltk.word_tokenize(answer)))
+        for dist in distractors:
+            dist_tok = ' '.join(map(lambda x : ps.stem(x).lower(), nltk.word_tokenize(dist)))
+            if answer_tok in dist_tok or dist_tok in answer_tok:
+                continue
+            res.append(dist)
+        return res
+
+    
     def _postprocess(self, distractors : List[str], answer : str, limit : Optional[int] = None) -> List[str] :
         # TODO shuffle the distractors ?
         # TODO code this function better
         s = set()
         ans = []
-        filtered = filter(lambda x : answer.lower().strip() not in x.lower().strip(), distractors)
+        # Substring filter
+        filtered = list(filter(lambda x : answer.lower().strip() not in x.lower().strip(), distractors))
+        # Stemming filter
+        filtered = self._stemming_filter(filtered, answer)
+        # TODO Lemmatization filter
         for dist in filtered:
-            if dist.lower().strip not in s:
-                s.add(dist.lower().strip)
-                ans.append(dist.lower().strip())
+            temp = dist.strip().lower()
+            if temp not in s:
+                s.add(temp)
+                ans.append(temp)
         limit = min(limit if limit else float('inf'), len(ans))
         return ans[:limit] 
 

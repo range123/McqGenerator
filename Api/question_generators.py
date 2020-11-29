@@ -1,4 +1,5 @@
 from pipelines import pipeline
+from typing import Optional
 # import spacy
 # import neuralcoref
 
@@ -34,9 +35,10 @@ class T5QuestionAnswerGenerator(QuestionAnswerGenerator):
 
         return text
 
-    def generate_question_answer(self, text : str, max_questions : int = None):
+    def generate_question_answer(self, text : str, max_questions : Optional[int] = None):
         preprocessed_text = self._preprocess(text)
         result = self.model(preprocessed_text)
+        max_questions = min(max_questions if max_questions else float('inf'), len(result))
         return result[:max_questions]
 
 

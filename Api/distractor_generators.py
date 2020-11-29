@@ -3,7 +3,7 @@
 # from sense2vec import Sense2VecComponent
 import requests
 import json
-from typing import List
+from typing import List, Optional
 import nltk
 import string
 
@@ -89,10 +89,18 @@ class Sense2VecDistractorGenerator(DistractorGenerator):
             return text
         # return ' '.join(text.split()).strip()
     
-    def _postprocess(self, distractors : List[str], answer : str, limit : int = 3) -> List[str] :
+    def _postprocess(self, distractors : List[str], answer : str, limit : Optional[int] = None) -> List[str] :
         # TODO shuffle the distractors ?
         # TODO code this function better
-        return list(set(list(filter(lambda x : answer.lower().strip() not in x.lower().strip(), distractors))))[:limit]
+        s = set()
+        ans = []
+        filtered = filter(lambda x : answer.lower().strip() not in x.lower().strip(), distractors)
+        for dist in filtered:
+            if dist.lower().strip not in s:
+                s.add(dist.lower().strip)
+                ans.append(dist.lower().strip())
+        limit = min(limit if limit else float('inf'), len(ans))
+        return ans[:limit] 
 
     def generate_distractors(self, question : str, answer : str, limit : int = 3) -> List[str]:
         sense  = 'auto'
@@ -107,7 +115,7 @@ class Sense2VecDistractorGenerator(DistractorGenerator):
         distractors = []
         for dist in json.loads(response.text)['results']:
             distractors.append(dist['text'])
-        return self._postprocess(distractors, answer), answer
+        return self._postprocess(distractors, answer, limit), answer
 
 
         

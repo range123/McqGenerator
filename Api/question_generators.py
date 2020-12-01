@@ -1,5 +1,5 @@
 from pipelines import pipeline
-from typing import Optional
+from typing import Optional, List
 # import spacy
 # import neuralcoref
 
@@ -35,9 +35,20 @@ class T5QuestionAnswerGenerator(QuestionAnswerGenerator):
 
         return text
 
+    def _remove_duplicates(self, questions : List[dict]):
+        res = []
+        s = set()
+        for quest in questions:
+            temp = quest['question'].strip().lower()
+            if temp not in s:
+                res.append(quest)
+                s.add(temp)
+        return res
+
     def generate_question_answer(self, text : str, max_questions : Optional[int] = None):
         preprocessed_text = self._preprocess(text)
         result = self.model(preprocessed_text)
+        result = self._remove_duplicates(result)
         max_questions = min(max_questions if max_questions else float('inf'), len(result))
         return result[:max_questions]
 

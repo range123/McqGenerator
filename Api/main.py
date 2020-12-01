@@ -4,6 +4,10 @@ from fastapi import FastAPI
 from pydantic import BaseModel, Field, validator
 from typing import List, Optional
 import uvicorn
+from fastapi.middleware.cors import CORSMiddleware
+
+
+
 
 tags_metadata = [
     {
@@ -15,6 +19,21 @@ app = FastAPI(
     title="API for NLP App",
     description="API which exposes endpoints for MCQ generation from text and other NLP tasks",
     version="0.0.1",
+)
+# TODO Add known origins later and pass to allow_origins instead of *
+# origins = [
+#     "http://localhost.tiangolo.com",
+#     "https://localhost.tiangolo.com",
+#     "http://localhost",
+#     "http://localhost:8080",
+# ]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 class MCQ(BaseModel):

@@ -5,9 +5,10 @@ from pydantic import BaseModel, Field, validator
 from typing import List, Optional
 import uvicorn
 from fastapi.middleware.cors import CORSMiddleware
+import yaml
+import logging
 
-
-
+logger = logging.getLogger()
 
 tags_metadata = [
     {
@@ -36,6 +37,21 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+def load_config(fpath):
+    '''
+    Reads a yaml file and returns it as a dict
+    Args:
+        fpath (str) : The path to the yaml file.
+    Returns:
+        dict (dict) : Dictionary containing the contents of the yaml file. 
+    '''
+    try:
+        with open(fpath) as f:
+            return yaml.safe_load(f)
+    except:
+        logger.error('Cannot open ./config.yml, using default model path')
+        return {'T5ModelPath' : 'valhalla/t5-small-qa-qg-hl'}
+
 class MCQ(BaseModel):
     question : str
     answer : str
@@ -63,6 +79,21 @@ class InputModel(BaseModel):
             }
         }
 
+qmodel, dmodel = None, None 
+
+@app.on_event('startup')
+def load_models():
+    global qmodel, dmodel
+    config = load_config('./config.yml')
+    logger.info('Loading Model...')
+    try:
+        qmodel = T5QuestionAnswerGenerator(config['T5ModelPath'])
+    except:
+        logger.error('Invalid model path provided, using default path')
+        qmodel = T5QuestionAnswerGenerator('valhalla/t5-small-qa-qg-hl')
+    dmodel = Sense2VecDistractorGenerator()
+
+
 @app.post('/generate_mcqs', tags = ['mcqs'], response_model = List[MCQ])
 async def generate_mcqs(inp : InputModel):
     res = qmodel.generate_question_answer(inp.source, max_questions= inp.max_questions)
@@ -72,6 +103,7 @@ async def generate_mcqs(inp : InputModel):
     return res
 
 if __name__ == "__main__":
+    config = load_config('./config.yml')
     qmodel = T5QuestionAnswerGenerator('../saved_models/t5-small-qa-qg-hl')
     dmodel = Sense2VecDistractorGenerator()
     uvicorn.run(app,host='0.0.0.0',port=8000)

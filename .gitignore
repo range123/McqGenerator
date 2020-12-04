@@ -4,8 +4,9 @@ todo.txt
 saved_models/*
 **/out*
 **/test*
+**/config.yml
 
-# Node iggores
+# Node ignores
 .DS_Store
 node_modules
 /dist

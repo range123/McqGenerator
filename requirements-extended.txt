@@ -7,3 +7,4 @@ sense2vec==1.0.2
 neuralcoref==4.0.0
 fastapi
 uvicorn
+pyYAML

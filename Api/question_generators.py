@@ -46,6 +46,7 @@ class T5QuestionAnswerGenerator(QuestionAnswerGenerator):
         return res
 
     def generate_question_answer(self, text : str, max_questions : Optional[int] = None):
+        if not text: return []
         preprocessed_text = self._preprocess(text)
         result = self.model(preprocessed_text)
         result = self._remove_duplicates(result)

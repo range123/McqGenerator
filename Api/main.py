@@ -65,11 +65,11 @@ class InputModel(BaseModel):
                                     description= 'Maximum number of questions to generate', ge=1)
     max_distractors : Optional[int] = Field(None, title='Maximum Distractors',
                                         description='Maximum number of distractors to generate per question', ge=0)
-    # @validator('source')
-    # def should_have_min_words(cls, v):
-    #     if len(v.split()) < 30:
-    #         raise ValueError('Should contain atleast 30 words')
-    #     return v
+    @validator('source')
+    def should_have_min_words(cls, v):
+        if len(v.split()) < 5:
+            raise ValueError('Should contain atleast 5 words')
+        return v
     class Config:
         schema_extra = {
             "example": {

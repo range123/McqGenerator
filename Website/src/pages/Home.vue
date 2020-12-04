@@ -78,9 +78,9 @@ export default {
             this.isdisabled = true;
             const url = "http://localhost:8000/generate_mcqs"
             axios.post(url, {
-                source : this.text
+                source : this.text.trim()
             }).then((res) => {
-                console.log(res.data)
+                // console.log(res.data)
                 //Shuffle questions if necessary
                 // const temp = shuffle(res.data.filter((x) => {
                 //     return x.distractors.length >=3;
@@ -104,6 +104,10 @@ export default {
                     data.push(t)
                 });
                 this.mcqs = data
+                this.isdisabled = false;
+            }).catch((err) => {
+                window.alert('Atleast 5 words required')
+                console.log(err)
                 this.isdisabled = false;
             })
         },

@@ -17,9 +17,9 @@
       </button>
         <article class="w-1/2 bg-gray-100 border-solid border-black border-2 overflow-auto divide-y-4">
             <div class="justify-around flex w-full p-4 border-black">
-                <button class="border w-1/4 border-green-500 bg-green-500 text-white font-bold rounded-md px-4 py-2 m-2 transition duration-500 ease select-none hover:bg-green-600 focus:outline-none focus:shadow-outline" @click="showanswer=!showanswer">{{!showanswer ? "Show Answers" : "Hide Answers"}}</button>
-                <button @click="editmode=!editmode" class="border w-1/4 border-gray-700 font-bold bg-gray-700 text-white rounded-md px-4 py-2 m-2 transition duration-500 ease select-none hover:bg-gray-800 focus:outline-none focus:shadow-outline">{{!editmode ? "Edit" : "Save" }}</button>
-                <button @click="print" class="border w-1/4 border-indigo-500 bg-indigo-500 text-white font-bold rounded-md px-4 py-2 m-2 transition duration-500 ease select-none hover:bg-indigo-600 focus:outline-none focus:shadow-outline">Save & Print</button>
+                <button :class="mcqs.length==0 ? 'opacity-25' : 'hover:bg-green-600' " :disabled="mcqs.length==0" @click="showanswer=!showanswer" class="border w-1/4 border-green-500 bg-green-500 text-white font-bold rounded-md px-4 py-2 m-2 transition duration-500 ease select-none  focus:outline-none focus:shadow-outline" >{{!showanswer ? "Show Answers" : "Hide Answers"}}</button>
+                <button :class="mcqs.length==0 ? 'opacity-25' : 'hover:bg-gray-800'" :disabled="mcqs.length==0" @click="editmode=!editmode" class="border w-1/4 border-gray-700 font-bold bg-gray-700 text-white rounded-md px-4 py-2 m-2 transition duration-500 ease select-none  focus:outline-none focus:shadow-outline">{{!editmode ? "Edit" : "Save" }}</button>
+                <button :class="mcqs.length==0 ? 'opacity-25' : 'hover:bg-indigo-600'" :disabled="mcqs.length==0" @click="print" class="border w-1/4 border-indigo-500 bg-indigo-500 text-white font-bold rounded-md px-4 py-2 m-2 transition duration-500 ease select-none  focus:outline-none focus:shadow-outline">Save & Print</button>
             </div>
         
             <div id="mcqs">
@@ -57,7 +57,7 @@ export default {
         generate()
         {
             this.isdisabled = true;
-            const url = "https://wise-chicken-49.loca.lt/generate_mcqs"
+            const url = "http://localhost:8000/generate_mcqs"
             axios.post(url, {
                 source : this.text
             }).then((res) => {

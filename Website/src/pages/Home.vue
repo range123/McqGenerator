@@ -107,8 +107,14 @@ export default {
                 this.mcqs = data
                 this.isdisabled = false;
             }).catch((err) => {
-                window.alert('Atleast 5 words required')
-                console.log(err)
+                if (err.response){
+                    if (err.response.status == '422'){
+                        window.alert('Atleast 5 words required')
+                    }
+                    else{
+                        console.log(err)
+                    }
+                }
                 this.isdisabled = false;
             })
         },

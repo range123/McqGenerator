@@ -1,7 +1,7 @@
 **/__pycache__
 todo.txt
 **/.venv
-saved_models/*
+**/saved_models/*
 **/out*
 **/test*
 **/config.yml

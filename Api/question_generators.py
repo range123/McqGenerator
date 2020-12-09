@@ -1,5 +1,7 @@
 from pipelines import pipeline
 from typing import Optional, List
+import nltk
+import re
 # import spacy
 # import neuralcoref
 
@@ -22,8 +24,10 @@ class T5QuestionAnswerGenerator(QuestionAnswerGenerator):
     #    self.nlp = spacy.load('en')
     #    neuralcoref.add_to_pipe(self.nlp,greedyness=0.5,max_dist=50,blacklist=False)
 
-    def _preprocess(self, text : str) -> str:
+    def _preprocess(self, text : str) -> List[str]:
         # TODO : do pronoun resolution
+        # Removing citations
+        text = re.sub('\[.+\]', '', text.strip())
         text = ' '.join(text.split())
         '''For pronoun resolution '''
         # doc = self.nlp(text)
@@ -31,9 +35,12 @@ class T5QuestionAnswerGenerator(QuestionAnswerGenerator):
         # resolved_coref = doc._.coref_resolved
         # return resolved_coref.lower()
 
-        text = text.lower() # The model seems to internally lowercase the text which causes some indexing issues in the pipeline
+        text = text.lower().split() # The model seems to internally lowercase the text which causes some indexing issues in the pipeline
+        texts = []
+        for i in range(0, len(text), 512):
+            texts.append(' '.join(text[i:min(i+512,len(text))]))
 
-        return text
+        return texts
 
     def _remove_duplicates(self, questions : List[dict]):
         res = []
@@ -47,8 +54,13 @@ class T5QuestionAnswerGenerator(QuestionAnswerGenerator):
 
     def generate_question_answer(self, text : str, max_questions : Optional[int] = None):
         if not text: return []
-        preprocessed_text = self._preprocess(text)
-        result = self.model(preprocessed_text)
+        preprocessed_texts = self._preprocess(text)
+        result = []
+        for preprocessed_text in preprocessed_texts:
+            try:
+                result.extend(self.model(preprocessed_text))
+            except:
+                continue
         result = self._remove_duplicates(result)
         max_questions = min(max_questions if max_questions else float('inf'), len(result))
         return result[:max_questions]
@@ -67,7 +79,7 @@ class BertQuestionAnswerGenerator(QuestionAnswerGenerator):
         pass
 
 if __name__ == "__main__":
-    model = T5QuestionAnswerGenerator('../../saved_models/t5-small-qa-qg-hl')
+    model = T5QuestionAnswerGenerator('./saved_models/t5-small-qa-qg-hl')
     # text = '''The adjective "deep" in deep learning comes from the use of multiple layers in the network. Early work showed that a linear perceptron cannot be a universal classifier, and then that a network with a nonpolynomial activation function with one hidden layer of unbounded width can on the other hand so be. Deep learning is a modern variation which is concerned with an unbounded number of layers of bounded size, which permits practical application and optimized implementation, while retaining theoretical universality under mild conditions. In deep learning the layers are also permitted to be heterogeneous and to deviate widely from biologically informed connectionist models, for the sake of efficiency, trainability and understandability, whence the "structured" part.'''
     text = '''Deep learning has evolved hand-in-hand with the digital era, which has brought about an explosion of data in all forms and from every region of the world. This data, known simply as big data, is drawn from sources like social media, internet search engines, e-commerce platforms, and online cinemas, among others. This enormous amount of data is readily accessible and can be shared through fintech applications like cloud computing.
 

@@ -105,13 +105,22 @@ class Sense2VecDistractorGenerator(DistractorGenerator):
         return res
 
     
-    def _postprocess(self, distractors : List[str], answer : str, limit : Optional[int] = None) -> List[str] :
+    def _postprocess(self, distractors : List[str], answer : str, original_ans : str, limit : Optional[int] = None) -> List[str] :
         # TODO shuffle the distractors ?
         # TODO code this function better!!!
         s = set()
         temp_ans, ans = [], []
         # Substring filter
-        filtered = list(filter(lambda x : answer.lower().strip() not in x.lower().strip(), distractors))
+        def check_substr(x, answer, original_ans):
+            x = x.lower().strip()
+            answer = answer.lower().strip()
+            original_ans = original_ans.lower().strip()
+            return x not in answer and answer not in x and x not in original_ans and original_ans not in x
+
+        filtered = []
+        for dist in distractors:
+            if check_substr(dist, answer, original_ans):
+                filtered.append(dist)
         # Stemming filter
         filtered = self._stemming_filter(filtered, answer)
         # TODO Lemmatization filter
@@ -135,6 +144,7 @@ class Sense2VecDistractorGenerator(DistractorGenerator):
 
     def generate_distractors(self, question : str, answer : str, limit : int = 3) -> List[str]:
         sense  = 'auto'
+        orig_ans = answer
         answer = self._preprocess(answer)
         
         data = json.dumps({
@@ -146,7 +156,7 @@ class Sense2VecDistractorGenerator(DistractorGenerator):
         distractors = []
         for dist in json.loads(response.text)['results']:
             distractors.append(dist['text'])
-        return self._postprocess(distractors, answer, limit), answer
+        return self._postprocess(distractors, answer, orig_ans, limit), answer
 
 
         

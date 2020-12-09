@@ -77,7 +77,8 @@ export default {
             }
             this.isdisabled = true;
             // const url = "http://localhost:8000/generate_mcqs"
-            const url = "https://mcq-generator.loca.lt/generate_mcqs"
+            // const url = "https://mcq-generator.loca.lt/generate_mcqs"
+            const url = "http://mcq-generator.eastus.azurecontainer.io:8000/generate_mcqs"
             axios.post(url, {
                 source : this.text.trim()
             }).then((res) => {

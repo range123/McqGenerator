@@ -71,6 +71,7 @@ class Sense2VecDistractorGenerator(DistractorGenerator):
         self.st = list(string.punctuation)
         self.st += nltk.corpus.stopwords.words("english")
         self.l = ["CD","FW","JJ","NN","NNS","NNP","NNPS","POS","RB","RP","VB","VBD","VBG","VBN","VBP","VBZ"]
+        self.stemmer = nltk.stem.PorterStemmer()
     
     def _preprocess(self, text : str) -> str:
         
@@ -89,12 +90,15 @@ class Sense2VecDistractorGenerator(DistractorGenerator):
             return text
         # return ' '.join(text.split()).strip()
     
+    def _stem(self, text):
+        return ' '.join(map(lambda x : self.stemmer.stem(x).lower(), nltk.word_tokenize(text)))
+
     def _stemming_filter(self, distractors : List[str], answer : str):
         res = []
         ps = nltk.stem.PorterStemmer()
-        answer_tok = ' '.join(map(lambda x : ps.stem(x).lower(), nltk.word_tokenize(answer)))
+        answer_tok = self._stem(answer)
         for dist in distractors:
-            dist_tok = ' '.join(map(lambda x : ps.stem(x).lower(), nltk.word_tokenize(dist)))
+            dist_tok = self._stem(dist)
             if answer_tok in dist_tok or dist_tok in answer_tok:
                 continue
             res.append(dist)
@@ -103,9 +107,9 @@ class Sense2VecDistractorGenerator(DistractorGenerator):
     
     def _postprocess(self, distractors : List[str], answer : str, limit : Optional[int] = None) -> List[str] :
         # TODO shuffle the distractors ?
-        # TODO code this function better
+        # TODO code this function better!!!
         s = set()
-        ans = []
+        temp_ans, ans = [], []
         # Substring filter
         filtered = list(filter(lambda x : answer.lower().strip() not in x.lower().strip(), distractors))
         # Stemming filter
@@ -115,7 +119,17 @@ class Sense2VecDistractorGenerator(DistractorGenerator):
             temp = dist.strip().lower()
             if temp not in s:
                 s.add(temp)
-                ans.append(temp)
+                temp_ans.append(temp)
+        # Remove similar distractors using stemming
+        for dist1 in temp_ans:
+            f = True
+            for dist2 in ans:
+                sdist1, sdist2 = self._stem(dist1), self._stem(dist2)
+                if sdist1 in sdist2 or sdist2 in sdist1:
+                    f = False
+                    break
+            if f:
+                ans.append(dist1)
         limit = min(limit if limit else float('inf'), len(ans))
         return ans[:limit] 
 

@@ -3,7 +3,7 @@
         <div class="flex w-full flex-wrap mt-5">
 
         <section class="flex m-auto w-11/12 h-screen">
-            <article class="w-1/2 border">
+            <article class="w-1/2 border" @drop.prevent="readfile($event)">
                 <textarea class="w-full h-full" v-model.lazy="text" ref="textref"></textarea>
             </article>
                     <button
@@ -37,6 +37,9 @@
 <script>
 import axios from 'axios'
 import Mcq from '../components/Mcq'
+var PDFJS;
+import('pdfjs-dist/webpack').then(pdfjs => {
+  PDFJS = pdfjs})
 export default {
      
     components : {Mcq},
@@ -127,6 +130,57 @@ export default {
         {
             // console.log(ind)
             this.mcqs.splice(ind,1)
+        },
+        readfile(e)
+        {
+            const files = e.dataTransfer.files
+            if (files.length != 1) {
+                window.alert('Accepts only one file')
+                return
+            }
+            const file = files[0]
+            var txtreader = new FileReader()
+            txtreader.onload = f => {
+                this.text = f.target.result
+            }
+
+
+            const getPageText = async (pdf, pageNo) => {
+                const page = await pdf.getPage(pageNo);
+                const tokenizedText = await page.getTextContent();
+                const pageText = tokenizedText.items.map(token => token.str).join("");
+                return pageText;
+            };
+
+            const getPDFText = async (source) => {
+                const pdf = await PDFJS.getDocument(source).promise;
+                const maxPages = pdf.numPages;
+                const pageTextPromises = [];
+                for (let pageNo = 1; pageNo <= maxPages; pageNo += 1) {
+                    pageTextPromises.push(getPageText(pdf, pageNo));
+                }
+                const pageTexts = await Promise.all(pageTextPromises);
+                return pageTexts.join(" ");
+            };
+
+            var pdfreader = new FileReader()
+            PDFJS.disableTextLayer = true;
+            pdfreader.onload = async f => {
+                this.text = await getPDFText(f.target.result)
+            }
+
+            if (file.type.startsWith('text/'))
+            {
+                txtreader.readAsText(file)
+            }
+            else if (file.type.startsWith('application/pdf'))
+            {
+                pdfreader.readAsArrayBuffer(file)
+            }
+            else{
+                window.alert('Currently Accepts only PDF and TXT files')
+            }
+
         }
 
     }

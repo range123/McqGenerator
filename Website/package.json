@@ -10,8 +10,10 @@
   "dependencies": {
     "axios": "^0.21.0",
     "core-js": "^3.6.5",
+    "file-saver": "^2.0.5",
     "pdfjs-dist": "^2.6.347",
     "tailwindcss": "^1.8.13",
+    "uuid": "^8.3.2",
     "vue": "^3.0.0",
     "vue-router": "^4.0.0-beta.13",
     "worker-loader": "^3.0.6"

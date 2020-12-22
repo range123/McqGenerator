@@ -12,19 +12,24 @@
         
         type="button"
         class="uppercase text-2xl font-bold border-solid border-black border-2 rounded-md px-4 py-2 m-2 transition duration-500 ease select-none focus:outline-none focus:shadow-outline"
-       @click="generate">
+       @click="generate"
+       title="Generate MCQs">
         G<br>e<br>n<br>e<br>r<br>a<br>t<br>e
       </button>
         <article class="w-1/2 bg-gray-100 border-solid border-black border-2 overflow-auto divide-y-4">
             <div class="justify-around flex w-full p-4 border-black">
                 <button :class="mcqs.length==0 ? 'opacity-25' : 'hover:bg-green-600' " :disabled="mcqs.length==0" @click="showanswer=!showanswer" class="border w-1/4 border-green-500 bg-green-500 text-white font-bold rounded-md px-4 py-2 m-2 transition duration-500 ease select-none  focus:outline-none focus:shadow-outline" >{{!showanswer ? "Show Answers" : "Hide Answers"}}</button>
                 <button :class="mcqs.length==0 ? 'opacity-25' : 'hover:bg-gray-800'" :disabled="mcqs.length==0" @click="editmode=!editmode" class="border w-1/4 border-gray-700 font-bold bg-gray-700 text-white rounded-md px-4 py-2 m-2 transition duration-500 ease select-none  focus:outline-none focus:shadow-outline">{{!editmode ? "Edit" : "Save" }}</button>
-                <button :class="mcqs.length==0 ? 'opacity-25' : 'hover:bg-indigo-600'" :disabled="mcqs.length==0" @click="print" class="border w-1/4 border-indigo-500 bg-indigo-500 text-white font-bold rounded-md px-4 py-2 m-2 transition duration-500 ease select-none  focus:outline-none focus:shadow-outline">Save & Print</button>
+                <button :class="mcqs.length==0 ? 'opacity-25' : 'hover:bg-indigo-600'" :disabled="mcqs.length==0" @click="exportmcqs" class="border w-1/4 border-indigo-500 bg-indigo-500 text-white font-bold rounded-md px-4 py-2 m-2 transition duration-500 ease select-none  focus:outline-none focus:shadow-outline">Save & Print</button>
                 <br>
             </div>
-            <p class="text-center text-gray-600">*double click to delete a question</p>
+            <p class="text-center text-gray-600">*Long click to delete a question</p>
             <div id="mcqs">
-                <Mcq @dblclick="()=>(handledelete(ind))" v-for="(mcq,ind) in mcqs" :key="mcq.question" :mcq="mcq" :qno="ind" :showanswer="showanswer" :contenteditable="editmode"> </Mcq>
+                <Mcq  @onmcqchange="handlechange(ind,$event)" @mousedown="()=>(handledown(ind))" @mouseup="handleup" v-for="(mcq,ind) in mcqs" :key="mcq.id" :mcq="mcq" :qno="ind" :showanswer="showanswer" class="shadow-sm" :editable="editmode"> </Mcq>
+            </div>
+            <div class="w-full flex justify-around">
+                <button @click="addmcq" :class="editmode ? 'hover:bg-blue-300' :''" :disabled="!editmode" title="Add MCQ" class="border bg-gray-400 text-white text-4xl w-16 font-bold h-16 shadow my-5">
+                    +</button>
             </div>
                 
             </article>
@@ -37,30 +42,12 @@
 <script>
 import axios from 'axios'
 import Mcq from '../components/Mcq'
+import { saveAs } from 'file-saver'
+import { v4 as uuidv4 } from 'uuid';
 var PDFJS;
 import('pdfjs-dist/webpack').then(pdfjs => {
   PDFJS = pdfjs})
-export default {
-     
-    components : {Mcq},
-    directives : { print }
-    ,
-    data()
-    {
-        const text = ''
-        const mcqs = []
-        const isdisabled= false
-        const showanswer = false
-        const editmode = false
-        return {text, isdisabled, mcqs, showanswer, editmode}
-    },
-    mounted(){
-        this.$refs.textref.focus()
-    },
-    methods : {
-        generate()
-        {
-            function shuffle(array) {
+function shuffle(array) {
                 var currentIndex = array.length, temporaryValue, randomIndex;
 
                 // While there remain elements to shuffle...
@@ -78,6 +65,28 @@ export default {
                 return array
 
             }
+export default {
+     
+    components : {Mcq},
+    directives : { print }
+    ,
+    data()
+    {
+        const text = ''
+        const mcqs = []
+        const isdisabled= false
+        const showanswer = false
+        const timer = ''
+        const editmode = false
+        return {text, isdisabled, mcqs, showanswer, timer, editmode}
+    },
+    mounted(){
+        this.$refs.textref.focus()
+    },
+    methods : {
+        generate()
+        {
+            
             this.isdisabled = true;
             // const url = "http://localhost:8000/generate_mcqs"
             // const url = "https://mcq-generator.loca.lt/generate_mcqs"
@@ -99,6 +108,7 @@ export default {
                 temp.forEach(element => {
                     const t = {
                         'question' : element.question,
+                        id : uuidv4()
                     }
                     // Shuffle the options before selecting if necessary
                     // element.distractors = shuffle(element.distractors)
@@ -126,10 +136,47 @@ export default {
         {
             this.$htmlToPaper('mcqs')
         },
-        handledelete(ind)
+        exportmcqs()
+        {
+
+            function exportmcq(qno, mcq)
+            {
+                const temp = {...mcq}
+                const quest = `::Q${qno}:: ${mcq.question}`
+                let ans = '{'
+                for (let i = 0; i< temp.options.length; i++) {
+                  const ele = temp.options[i]; 
+                    if (ele.isanswer)
+                        ans += ' ='+ele.value
+                    else
+                        ans += ' ~'+ele.value
+                
+                }
+                return quest + '\n' + ans + ' }'
+
+            }
+            const temp = []
+            this.mcqs.forEach((mcq, ind) => {
+                temp.push(exportmcq(ind+1,mcq))
+            })
+            var blob = new Blob([temp.join('\n\n')], {type: "text/plain;charset=utf-8"});
+            saveAs(blob, "MCQs")
+            
+
+        }
+        ,
+        handledown(ind)
         {
             // console.log(ind)
-            this.mcqs.splice(ind,1)
+            this.timer = setTimeout( () => {
+                this.mcqs.splice(ind,1)
+            },1000)
+            
+        },
+        handleup()
+        {
+            if (this.timer)
+                clearInterval(this.timer);
         },
         readfile(e)
         {
@@ -181,6 +228,23 @@ export default {
                 window.alert('Currently Accepts only PDF and TXT files')
             }
 
+        },
+        handlechange(ind,value)
+        {
+            this.mcqs[ind] = value
+        },
+        addmcq()
+        {
+            const temp = {
+                question : "question",
+                options : shuffle([
+                    {value : "answer", isanswer : true},
+                    {value : "option1", isanswer : false},
+                    {value : "option2", isanswer : false},
+                    {value : "option3", isanswer : false}
+                ])
+            }
+            this.mcqs.push(temp)
         }
 
     }

@@ -237,6 +237,7 @@ export default {
         {
             const temp = {
                 question : "question",
+                id : uuidv4(),
                 options : shuffle([
                     {value : "answer", isanswer : true},
                     {value : "option1", isanswer : false},

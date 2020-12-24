@@ -1,13 +1,17 @@
 <template>
 <div class="p-4">
     <div>
-        <span class="w-1/12">{{(qno +1) + '. '}}</span><input @input="handleinput(0,$event.target.value)" :value="mcq.question" :readonly="!editable" class="bg-gray-100 outline-none w-11/12" >
+        <span class="w-1/12">{{(qno +1) + '. '}}</span><input @input="handleinput(0,$event.target.value)" :value="mcq.question" :readonly="!editable" class="bg-gray-100 outline-none w-11/12" :class="!editable ? 'cursor-default' : ''">
     </div>
     
     <div v-for="(option, ind) in mcq.options" :key="ind" class="px-4">
         <span class="w-1/12">{{String.fromCharCode(65 + ind) + ') '}}</span>
-        <input @input="handleinput(ind+1,$event.target.value)" class="bg-gray-100 outline-none w-11/12" :class="showanswer && option.isanswer ? 'text-green-500 font-bold' : ''" :value="option.value" :readonly="!editable">
+        <input :list="mcq.id" @input="handleinput(ind+1,$event.target.value)" class="bg-gray-100 outline-none w-11/12" :class="showanswer && option.isanswer ? 'text-green-500 font-bold ' : ' ' + (!editable ? 'cursor-default' : '')"  :value="option.value" :readonly="!editable">
     </div>
+
+    <datalist :id="mcq.id">
+        <option :key="option" v-for="option in mcq.other_options">{{option}}</option>
+    </datalist>
 
 
 </div>
@@ -19,8 +23,10 @@
 export default {
     props : {
         'mcq' : {
+            'id' : String,
             'question' : String,
-            'options' : Array
+            'options' : Array,
+            'other_options' : Array
         },
         'qno' : Number,
         'showanswer' : Boolean,
@@ -66,6 +72,8 @@ export default {
 }
 </script>
 
-<style>
-
+<style scoped>
+[list]::-webkit-calendar-picker-indicator {
+    display: none;
+  }
 </style>

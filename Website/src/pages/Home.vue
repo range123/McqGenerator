@@ -28,7 +28,7 @@
                 <Mcq  @onmcqchange="handlechange(ind,$event)" @mousedown="()=>(handledown(ind))" @mouseup="handleup" v-for="(mcq,ind) in mcqs" :key="mcq.id" :mcq="mcq" :qno="ind" :showanswer="showanswer" class="shadow-sm" :editable="editmode"> </Mcq>
             </div>
             <div class="w-full flex justify-around">
-                <button @click="addmcq" :class="editmode ? 'hover:bg-blue-300' :''" :disabled="!editmode" title="Add MCQ" class="border bg-gray-400 text-white text-4xl w-16 font-bold h-16 shadow my-5">
+                <button @click="addmcq" :class="editmode ? 'hover:bg-gray-800' :'opacity-25'" :disabled="!editmode" :title="editmode ? 'Add MCQ' : 'Enable edit mode'" class="border border-gray-700 bg-gray-700 text-white text-4xl w-16 font-bold h-16 shadow my-5">
                     +</button>
             </div>
                 
@@ -108,7 +108,8 @@ export default {
                 temp.forEach(element => {
                     const t = {
                         'question' : element.question,
-                        id : uuidv4()
+                        id : uuidv4(),
+                        other_options : element.distractors
                     }
                     // Shuffle the options before selecting if necessary
                     // element.distractors = shuffle(element.distractors)
@@ -238,6 +239,7 @@ export default {
             const temp = {
                 question : "question",
                 id : uuidv4(),
+                other_options : [],
                 options : shuffle([
                     {value : "answer", isanswer : true},
                     {value : "option1", isanswer : false},

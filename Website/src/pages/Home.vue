@@ -25,7 +25,7 @@
             </div>
             <p class="text-center text-gray-600">*Long click to delete a question</p>
             <div id="mcqs">
-                <Mcq  @onmcqchange="handlechange(ind,$event)" @mousedown="()=>(handledown(ind))" @mouseup="handleup" v-for="(mcq,ind) in mcqs" :key="mcq.id" :mcq="mcq" :qno="ind" :showanswer="showanswer" class="shadow-sm" :editable="editmode"> </Mcq>
+                <Mcq @onmcqchange="handlechange(ind,$event)" @mousedown="()=>(handledown(ind))" @mouseleave="handleup" @mouseup="handleup" v-for="(mcq,ind) in mcqs" :key="mcq.id" :mcq="mcq" :qno="ind" :showanswer="showanswer" class="shadow-sm" :editable="editmode"> </Mcq>
             </div>
             <div class="w-full flex justify-around">
                 <button @click="addmcq" :class="editmode ? 'hover:bg-gray-800' :'opacity-25'" :disabled="!editmode" :title="editmode ? 'Add MCQ' : 'Enable edit mode'" class="border border-gray-700 bg-gray-700 text-white text-4xl w-16 font-bold h-16 shadow my-5">
@@ -177,7 +177,7 @@ export default {
         handleup()
         {
             if (this.timer)
-                clearInterval(this.timer);
+                clearTimeout(this.timer);
         },
         readfile(e)
         {

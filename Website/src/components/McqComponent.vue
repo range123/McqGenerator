@@ -1,5 +1,5 @@
 <template>
-  <div class="p-4">
+  <div class="p-4 justify-start">
     <div>
       <span class="w-1/12 cursor-default">{{ qno + 1 + ". " }}</span
       ><input
@@ -26,11 +26,27 @@
             handleInput(ind + 1, event.target.value);
           }
         "
-        class="bg-gray-100 outline-none w-11/12"
+        class="bg-gray-100 outline-none w-10/12 inline-flex justify-start"
         :class="getClass(option.isanswer)"
         :value="option.value"
         :readonly="!editMode"
       />
+      <span class="w-1/12 inline-flex ">
+        <button
+          @click="() => makeAnswer(ind)"
+          class="w-1/3"
+          :title="option.isanswer ? 'UnMark Answer' : 'Mark Answer'"
+        >
+          <img src="../assets/correct.png" />
+        </button>
+        <button
+          @click="() => deleteOption(ind)"
+          class="w-1/3"
+          title="Remove Option"
+        >
+          <img src="../assets/delete.png" />
+        </button>
+      </span>
     </div>
 
     <datalist :id="mcq.id">
@@ -38,6 +54,11 @@
         option
       }}</option>
     </datalist>
+    <div class="w-full flex ">
+      <button @click="addOption" class="w-8 mt-5 ml-4" title="Add Option">
+        <img src="../assets/addoption.png" />
+      </button>
+    </div>
   </div>
 </template>
 
@@ -68,6 +89,13 @@ export default defineComponent({
 
         return res;
       };
+    },
+    answerCount(): number {
+      let count = 0;
+      this.mcq.options.forEach(option => {
+        if (option.isanswer) count++;
+      });
+      return count;
     }
   },
   methods: {
@@ -79,8 +107,27 @@ export default defineComponent({
           value,
           isanswer: temp.options[type - 1].isanswer
         };
-      // this.updateMcq({ index: this.qno, mcq: temp });
       this.$store.commit("updateMcq", { index: this.qno, mcq: temp });
+    },
+    addOption() {
+      if (this.mcq.options.length < 26)
+        this.$store.commit("addOption", this.qno);
+    },
+    deleteOption(curOption: number) {
+      if (!this.mcq.options[curOption].isanswer || this.answerCount > 1) {
+        this.$store.commit("deleteOption", {
+          mcqIndex: this.qno,
+          optionIndex: curOption
+        });
+      }
+    },
+    makeAnswer(curOption: number) {
+      if (!this.mcq.options[curOption].isanswer || this.answerCount > 1) {
+        this.$store.commit("toggleOptionAnswer", {
+          mcqIndex: this.qno,
+          optionIndex: curOption
+        });
+      }
     }
   }
 });

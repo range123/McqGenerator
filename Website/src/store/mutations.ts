@@ -31,3 +31,26 @@ export function updateMcq(state: State, { index, mcq }: Update) {
 export function setText(state: State, text: string) {
   state.text = text;
 }
+
+interface SpecifyOption {
+  mcqIndex: number;
+  optionIndex: number;
+}
+export function deleteOption(
+  state: State,
+  { mcqIndex, optionIndex }: SpecifyOption
+) {
+  state.mcqs[mcqIndex].options.splice(optionIndex, 1);
+}
+
+export function toggleOptionAnswer(
+  state: State,
+  { mcqIndex, optionIndex }: SpecifyOption
+) {
+  state.mcqs[mcqIndex].options[optionIndex].isanswer = !state.mcqs[mcqIndex]
+    .options[optionIndex].isanswer;
+}
+
+export function addOption(state: State, mcqIndex: number) {
+  state.mcqs[mcqIndex].options.push({ value: "New Option", isanswer: false });
+}

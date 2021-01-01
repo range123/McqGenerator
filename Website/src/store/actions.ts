@@ -47,11 +47,14 @@ export async function generateMcqs(
     return;
   }
 
-  let temp: McqModel[] = res.data;
+  // let temp: McqModel[] = res.data;
+  const temp: McqModel[] = res.data;
 
-  temp = temp.filter(x => {
-    return x.distractors.length >= 3;
-  });
+  // Uncomment to allow only questions with >=3 distractors
+
+  // temp = temp.filter(x => {
+  //   return x.distractors.length >= 3;
+  // });
 
   const mcqs: Mcq[] = [];
   temp.forEach(element => {
@@ -61,12 +64,11 @@ export async function generateMcqs(
       options: [],
       otherOptions: element.distractors
     };
-    t.options = shuffle([
-      { value: element.answer, isanswer: true },
-      { value: element.distractors[0], isanswer: false },
-      { value: element.distractors[1], isanswer: false },
-      { value: element.distractors[2], isanswer: false }
-    ]);
+    const options = [{ value: element.answer, isanswer: true }];
+    element.distractors.forEach(distractor => {
+      options.push({ value: distractor, isanswer: false });
+    });
+    t.options = shuffle(options);
 
     mcqs.push(t);
   });

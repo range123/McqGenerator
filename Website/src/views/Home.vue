@@ -67,12 +67,8 @@
             </mcq-component>
           </div>
           <div class="w-full flex justify-around">
-            <button
-              @click="addMcq"
-              title="Add MCQ"
-              class="border border-gray-700 hover:bg-gray-800 bg-gray-600 text-white text-4xl w-16 font-bold h-16 shadow my-5"
-            >
-              +
+            <button @click="addMcq" title="Add MCQ" class="w-16 font-bold my-5">
+              <img src="../assets/addmcq.png" />
             </button>
           </div>
         </article>

@@ -4,6 +4,10 @@ export function setMcqs(state: State, mcqs: Mcq[]) {
   state.mcqs = mcqs;
 }
 
+export function extendMcqs(state: State, mcqs: Mcq[]) {
+  state.mcqs.push(...mcqs);
+}
+
 export function toggleAnswer(state: State) {
   state.showAnswer = !state.showAnswer;
 }

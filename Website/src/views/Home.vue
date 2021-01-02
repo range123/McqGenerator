@@ -23,6 +23,9 @@
         </button>
         <article
           class="w-1/2 bg-gray-100 border-solid border-black border-2 overflow-auto divide-y-4"
+          @drop.prevent="loadMcqsFromFile($event)"
+          @dragenter.prevent=""
+          @dragover.prevent=""
         >
           <div class="justify-around flex w-full p-4 border-black">
             <button
@@ -45,9 +48,10 @@
               :class="isMcqEmpty ? 'opacity-25' : 'hover:bg-indigo-600'"
               :disabled="isMcqEmpty"
               @click="exportmcqs"
+              title="Export as GIFT file"
               class="border w-1/4 border-indigo-500 bg-indigo-500 text-white font-bold rounded-md px-4 py-2 m-2 transition duration-500 ease select-none  focus:outline-none focus:shadow-outline"
             >
-              Save & Print
+              Export
             </button>
             <br />
           </div>
@@ -67,8 +71,18 @@
             </mcq-component>
           </div>
           <div class="w-full flex justify-around">
+            <button @click="clearMcqs" title="Clear MCQs" class="w-16 my-5">
+              <img src="../assets/clearmcqs.png" />
+            </button>
             <button @click="addMcq" title="Add MCQ" class="w-16 font-bold my-5">
               <img src="../assets/addmcq.png" />
+            </button>
+            <button
+              @click="saveMcqsToFile"
+              title="Save to file"
+              class="w-16 my-5"
+            >
+              <img src="../assets/save.png" />
             </button>
           </div>
         </article>
@@ -189,6 +203,37 @@ export default defineComponent({
     },
     async addMcq() {
       await this.$store.dispatch("addMcq");
+    },
+    clearMcqs() {
+      this.$store.commit("setMcqs", []);
+    },
+    saveMcqsToFile() {
+      const temp = JSON.stringify(this.mcqs);
+      const blob = new Blob([temp], {
+        type: "application/json;charset=utf-8"
+      });
+      saveAs(blob, "saveFile.json");
+    },
+    loadMcqsFromFile(e: DragEvent) {
+      const files = e.dataTransfer?.files ? e.dataTransfer.files : [];
+      // if (files.length != 1) {
+      //   window.alert("Accepts only one file");
+      //   return;
+      // }
+      // const file = files[0];
+
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        const txtreader = new FileReader();
+        txtreader.onload = f => {
+          if (f.target?.result && typeof f.target.result === "string") {
+            const mcqs: Mcq[] = JSON.parse(f.target.result);
+            this.$store.commit("extendMcqs", mcqs);
+          }
+        };
+        if (!file.type.startsWith("application/json")) return;
+        txtreader.readAsText(file);
+      }
     }
   },
   computed: {

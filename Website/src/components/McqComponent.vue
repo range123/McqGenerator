@@ -13,7 +13,7 @@
         class="bg-gray-100 outline-none w-9/12"
         :class="!editMode ? 'cursor-default' : ''"
       />
-      <span class="inline-flex mx-auto">
+      <span class="inline-flex mx-auto" :class="!editMode ? 'invisible' : ''">
         <button
           class="w-6 mt-3"
           title="Shuffle Options"
@@ -40,7 +40,7 @@
         :value="option.value"
         :readonly="!editMode"
       />
-      <span class="inline-flex mx-auto">
+      <span class="inline-flex mx-auto" :class="!editMode ? 'invisible' : ''">
         <button
           @click="() => makeAnswer(ind)"
           class="w-6"
@@ -63,7 +63,7 @@
         option
       }}</option>
     </datalist>
-    <div class="w-full flex ">
+    <div :class="!editMode ? 'invisible' : ''" class="w-full flex ">
       <button @click="addOption" class="w-8 mt-5 ml-4" title="Add Option">
         <img src="../assets/addoption.png" />
       </button>

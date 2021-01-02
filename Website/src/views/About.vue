@@ -62,7 +62,7 @@
           <center>
             <div class="w3-third">
               <img
-                src="https://avatars2.githubusercontent.com/u/36816700?s=400&u=37a0f987bb17383543edc36ab9a0cf7bcb00cfab&v=4"
+                src="../assets/jayaraman.jpeg"
                 alt="Boss"
                 style="width:45%"
                 class="w3-circle w3-hover-opacity"
@@ -73,7 +73,7 @@
 
             <div class="w3-third">
               <img
-                src="https://scontent-maa2-1.xx.fbcdn.net/v/t1.0-9/44038416_2058879604423241_8858734458795196416_o.jpg?_nc_cat=109&cb=846ca55b-311e05c7&ccb=2&_nc_sid=09cbfe&_nc_ohc=lkFQ-kIsYsMAX8J3-Hb&_nc_oc=AQlV94DPG7jRm6Guik3CB056FGVgybm-Dt05KjQzNRswRBUCk8TSjiWu9_JrsQqjE2M&_nc_ht=scontent-maa2-1.xx&oh=08d6b7d4c916afc97bec7c317ac80f84&oe=5FEECD7D"
+                src="../assets/gokul.jpg"
                 alt="Boss"
                 style="width:45%"
                 class="w3-circle w3-hover-opacity"
@@ -84,7 +84,7 @@
 
             <div class="w3-third">
               <img
-                src="https://scontent-maa2-2.cdninstagram.com/v/t51.2885-15/sh0.08/e35/s640x640/42611108_2260547674165051_6098128567871628914_n.jpg?_nc_ht=scontent-maa2-2.cdninstagram.com&_nc_cat=107&_nc_ohc=vtF9tNCumJEAX8y8rmJ&tp=1&oh=a0e8d300deff5e8500b850cbd0e41ad3&oe=5FF2E591"
+                src="../assets/dinesh.jpg"
                 alt="Boss"
                 style="width:45%"
                 class="w3-circle w3-hover-opacity"

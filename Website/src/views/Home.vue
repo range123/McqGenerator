@@ -92,18 +92,42 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
-import { PDFDocumentProxy, getDocument } from "pdfjs-dist/webpack";
-import { saveAs } from "file-saver";
+import { defineAsyncComponent, defineComponent } from "vue";
 import { Mcq } from "@/types";
-import McqComponent from "@/components/McqComponent.vue";
-import hash from "object-hash";
+// import McqComponent from "@/components/McqComponent.vue";
+import {
+  PDFDataRangeTransport,
+  PDFDocumentProxy,
+  PDFLoadingTask,
+  PDFProgressData
+} from "pdfjs-dist/webpack";
 // import HelloWorld from "@/components/HelloWorld.vue"; // @ is an alias to /src
+let getDocument: (
+  data: Uint8Array | BufferSource,
+  pdfDataRangeTransport?: PDFDataRangeTransport,
+  passwordCallback?: (fn: (password: string) => void, reason: string) => string,
+  progressCallback?: (progressData: PDFProgressData) => void
+) => PDFLoadingTask<PDFDocumentProxy>;
+let hash: (obj: any, options?: any) => string;
+let saveAs: (
+  data: Blob | string,
+  filename?: string,
+  disableAutoBOM?: boolean
+) => void;
+
+const main = async () => {
+  getDocument = (await import("pdfjs-dist/webpack")).getDocument;
+  hash = (await import("object-hash")).default;
+  saveAs = (await import("file-saver")).saveAs;
+};
+main();
 
 export default defineComponent({
   name: "Home",
   components: {
-    McqComponent
+    McqComponent: defineAsyncComponent(() =>
+      import("@/components/McqComponent.vue")
+    )
   },
   data() {
     const isdisabled = false;
@@ -119,7 +143,7 @@ export default defineComponent({
       await this.$store.dispatch("generateMcqs", this.text);
       this.isdisabled = false;
     },
-    readfile(e: DragEvent) {
+    async readfile(e: DragEvent) {
       const files = e.dataTransfer?.files ? e.dataTransfer.files : [];
       if (files.length != 1) {
         window.alert("Accepts only one file");
@@ -208,15 +232,15 @@ export default defineComponent({
     clearMcqs() {
       this.$store.commit("setMcqs", []);
     },
-    saveMcqsToFile() {
-      const mcqHash = this.getHash(this.mcqs);
+    async saveMcqsToFile() {
+      const mcqHash = await this.getHash(this.mcqs);
       const temp = JSON.stringify({ mcqs: this.mcqs, mcqHash });
       const blob = new Blob([temp], {
         type: "application/json;charset=utf-8"
       });
       saveAs(blob, "saveFile.json");
     },
-    loadMcqsFromFile(e: DragEvent) {
+    async loadMcqsFromFile(e: DragEvent) {
       const files = e.dataTransfer?.files ? e.dataTransfer.files : [];
       // if (files.length != 1) {
       //   window.alert("Accepts only one file");
@@ -227,12 +251,12 @@ export default defineComponent({
       for (let i = 0; i < files.length; i++) {
         const file = files[i];
         const txtreader = new FileReader();
-        txtreader.onload = f => {
+        txtreader.onload = async f => {
           if (f.target?.result && typeof f.target.result === "string") {
             const res = JSON.parse(f.target.result);
             const mcqs: Mcq[] = res.mcqs;
             const GTHash: string = res.mcqHash;
-            if (this.verifyHash(mcqs, GTHash))
+            if (await this.verifyHash(mcqs, GTHash))
               this.$store.commit("extendMcqs", mcqs);
             else window.alert("Integrity Check Failed");
           }
@@ -241,16 +265,17 @@ export default defineComponent({
         txtreader.readAsText(file);
       }
     },
-    getHash(mcqs: Mcq[]): string {
+    async getHash(mcqs: Mcq[]): Promise<string> {
       const options = {
         // excludeValues: true,
         unorderedArrays: true,
         encoding: "base64"
       };
+
       return hash(mcqs, options);
     },
-    verifyHash(mcqs: Mcq[], GTHash: string): boolean {
-      return this.getHash(mcqs) === GTHash;
+    async verifyHash(mcqs: Mcq[], GTHash: string): Promise<boolean> {
+      return (await this.getHash(mcqs)) === GTHash;
     }
   },
   computed: {

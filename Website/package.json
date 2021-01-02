@@ -53,15 +53,7 @@
     "prettier": "^1.19.1",
     "tailwindcss": "npm:@tailwindcss/postcss7-compat",
     "typescript": "~3.9.3",
-    "vue-jest": "^5.0.0-0"
-  },
-  "vue": {
-    "pwa": {
-      "name": "Mcq Generator",
-      "appleMobileWebAppCapable": "yes",
-      "workboxOptions": {
-        "skipWaiting": true
-      }
-    }
+    "vue-jest": "^5.0.0-0",
+    "webpack-bundle-analyzer": "^4.3.0"
   }
 }

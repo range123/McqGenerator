@@ -1,5 +1,5 @@
 <template>
-  <div class="p-4 justify-start text-lg">
+  <div class="px-4 justify-start text-lg">
     <div>
       <span class="w-1/12 cursor-default font-mono">{{ qno + 1 + ". " }}</span
       ><input

@@ -97,6 +97,7 @@ import { PDFDocumentProxy, getDocument } from "pdfjs-dist/webpack";
 import { saveAs } from "file-saver";
 import { Mcq } from "@/types";
 import McqComponent from "@/components/McqComponent.vue";
+import hash from "object-hash";
 // import HelloWorld from "@/components/HelloWorld.vue"; // @ is an alias to /src
 
 export default defineComponent({
@@ -208,7 +209,8 @@ export default defineComponent({
       this.$store.commit("setMcqs", []);
     },
     saveMcqsToFile() {
-      const temp = JSON.stringify(this.mcqs);
+      const mcqHash = this.getHash(this.mcqs);
+      const temp = JSON.stringify({ mcqs: this.mcqs, mcqHash });
       const blob = new Blob([temp], {
         type: "application/json;charset=utf-8"
       });
@@ -227,13 +229,28 @@ export default defineComponent({
         const txtreader = new FileReader();
         txtreader.onload = f => {
           if (f.target?.result && typeof f.target.result === "string") {
-            const mcqs: Mcq[] = JSON.parse(f.target.result);
-            this.$store.commit("extendMcqs", mcqs);
+            const res = JSON.parse(f.target.result);
+            const mcqs: Mcq[] = res.mcqs;
+            const GTHash: string = res.mcqHash;
+            if (this.verifyHash(mcqs, GTHash))
+              this.$store.commit("extendMcqs", mcqs);
+            else window.alert("Integrity Check Failed");
           }
         };
         if (!file.type.startsWith("application/json")) return;
         txtreader.readAsText(file);
       }
+    },
+    getHash(mcqs: Mcq[]): string {
+      const options = {
+        // excludeValues: true,
+        unorderedArrays: true,
+        encoding: "base64"
+      };
+      return hash(mcqs, options);
+    },
+    verifyHash(mcqs: Mcq[], GTHash: string): boolean {
+      return this.getHash(mcqs) === GTHash;
     }
   },
   computed: {

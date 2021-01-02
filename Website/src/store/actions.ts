@@ -31,7 +31,8 @@ export async function generateMcqs(
   { commit }: ActionContext<State, State>,
   text: string
 ) {
-  const url = "http://localhost:8000/generate_mcqs";
+  // const url = "http://localhost:8000/generate_mcqs";
+  const url = "https://5evt4e.deta.dev/generate_mcqs"
   let res: AxiosResponse<any>;
   try {
     res = await axios.post(url, {

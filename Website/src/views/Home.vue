@@ -52,7 +52,7 @@
             <br />
           </div>
           <p class="text-center text-gray-600">
-            *Long click to delete a question
+            *Long click to delete a question (Edit Mode)
           </p>
           <div id="mcqs">
             <mcq-component
@@ -169,13 +169,14 @@ export default defineComponent({
       saveAs(blob, "MCQs");
     },
     handleup() {
-      if (this.timer) clearTimeout(this.timer);
+      if (this.editMode && this.timer) clearTimeout(this.timer);
     },
     handledown(ind: number) {
-      // console.log(ind)
-      this.timer = setTimeout(() => {
-        this.deleteMcq(ind);
-      }, 1000);
+      if (this.editMode) {
+        this.timer = setTimeout(() => {
+          this.deleteMcq(ind);
+        }, 1000);
+      }
     },
     toggleEdit() {
       this.$store.commit("toggleEdit");

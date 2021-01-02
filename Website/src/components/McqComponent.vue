@@ -1,7 +1,7 @@
 <template>
-  <div class="p-4 justify-start">
+  <div class="p-4 justify-start text-lg">
     <div>
-      <span class="w-1/12 cursor-default">{{ qno + 1 + ". " }}</span
+      <span class="w-1/12 cursor-default font-mono">{{ qno + 1 + ". " }}</span
       ><input
         @input="
           event => {
@@ -10,13 +10,22 @@
         "
         :value="mcq.question"
         :readonly="!editMode"
-        class="bg-gray-100 outline-none w-11/12"
+        class="bg-gray-100 outline-none w-9/12"
         :class="!editMode ? 'cursor-default' : ''"
       />
+      <span class="inline-flex mx-auto">
+        <button
+          class="w-6 mt-3"
+          title="Shuffle Options"
+          @click="shuffleOptions"
+        >
+          <img src="../assets/shuffle.png" />
+        </button>
+      </span>
     </div>
 
     <div v-for="(option, ind) in mcq.options" :key="ind" class="px-4">
-      <span class="w-1/12 cursor-default">{{
+      <span class="w-1/12 cursor-default font-mono">{{
         String.fromCharCode(65 + ind) + ") "
       }}</span>
       <input
@@ -26,22 +35,22 @@
             handleInput(ind + 1, event.target.value);
           }
         "
-        class="bg-gray-100 outline-none w-10/12 inline-flex justify-start"
+        class="bg-gray-100 outline-none w-9/12 inline-flex justify-start"
         :class="getClass(option.isanswer)"
         :value="option.value"
         :readonly="!editMode"
       />
-      <span class="w-1/12 inline-flex ">
+      <span class="inline-flex mx-auto">
         <button
           @click="() => makeAnswer(ind)"
-          class="w-1/3"
+          class="w-6"
           :title="option.isanswer ? 'UnMark Answer' : 'Mark Answer'"
         >
           <img src="../assets/correct.png" />
         </button>
         <button
           @click="() => deleteOption(ind)"
-          class="w-1/3"
+          class="w-6"
           title="Remove Option"
         >
           <img src="../assets/delete.png" />
@@ -128,6 +137,9 @@ export default defineComponent({
           optionIndex: curOption
         });
       }
+    },
+    shuffleOptions() {
+      this.$store.dispatch("shuffleOptions", this.qno);
     }
   }
 });

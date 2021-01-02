@@ -65,14 +65,14 @@ export async function generateMcqs(
       otherOptions: element.distractors
     };
     const options = [{ value: element.answer, isanswer: true }];
-    element.distractors.forEach(distractor => {
+    element.distractors.forEach((distractor, ind) => {
+      if (ind > 2) return;
       options.push({ value: distractor, isanswer: false });
     });
     t.options = shuffle(options);
 
     mcqs.push(t);
   });
-  console.log(mcqs);
   commit("setMcqs", mcqs);
 }
 
@@ -89,4 +89,13 @@ export async function addMcq({ commit }: ActionContext<State, State>) {
     ])
   };
   commit("addMcq", mcq);
+}
+
+export async function shuffleOptions(
+  { commit, state }: ActionContext<State, State>,
+  mcqIndex: number
+) {
+  const mcq: Mcq = JSON.parse(JSON.stringify(state.mcqs[mcqIndex]));
+  mcq.options = shuffle(mcq.options);
+  commit("updateMcq", { index: mcqIndex, mcq });
 }

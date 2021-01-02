@@ -10,16 +10,16 @@
         "
         :value="mcq.question"
         :readonly="!editMode"
-        class="bg-gray-100 outline-none w-9/12"
+        class="bg-gray-100 outline-none w-9/12 "
         :class="!editMode ? 'cursor-default' : ''"
       />
-      <span class="inline-flex mx-auto" :class="!editMode ? 'invisible' : ''">
+      <span class="inline-flex" :class="!editMode ? 'invisible' : ''">
         <button
-          class="w-6 mt-3"
+          class="mt-3 focus:outline-none focus:shadow-outline rounded-full shadow ml-2"
           title="Shuffle Options"
           @click="shuffleOptions"
         >
-          <img src="../assets/shuffle.png" />
+          <img src="../assets/Buttons/ans/shuffle.png" />
         </button>
       </span>
     </div>
@@ -40,20 +40,30 @@
         :value="option.value"
         :readonly="!editMode"
       />
-      <span class="inline-flex mx-auto" :class="!editMode ? 'invisible' : ''">
+      <span class="inline-flex" :class="!editMode ? 'invisible' : ''">
         <button
           @click="() => makeAnswer(ind)"
-          class="w-6"
+          class="focus:outline-none focus:shadow-outline rounded-full shadow"
+          id="temp"
           :title="option.isanswer ? 'UnMark Answer' : 'Mark Answer'"
         >
-          <img src="../assets/correct.png" />
+          <img
+            v-if="option.isanswer"
+            src="../assets/Buttons/ans/ans_unmark.png"
+            alt="UnMark Answer"
+          />
+          <img
+            v-else
+            src="../assets/Buttons/ans/ans_mark.png"
+            alt="Mark Answer"
+          />
         </button>
         <button
           @click="() => deleteOption(ind)"
-          class="w-6"
+          class="focus:outline-none focus:shadow-outline rounded-full shadow ml-1"
           title="Remove Option"
         >
-          <img src="../assets/delete.png" />
+          <img src="../assets/Buttons/ans/dis_delete.png" />
         </button>
       </span>
     </div>
@@ -64,8 +74,12 @@
       }}</option>
     </datalist>
     <div :class="!editMode ? 'invisible' : ''" class="w-full flex ">
-      <button @click="addOption" class="w-8 mt-5 ml-4" title="Add Option">
-        <img src="../assets/addoption.png" />
+      <button
+        @click="addOption"
+        class="mt-3 mb-2 ml-4 focus:outline-none focus:shadow-outline rounded-full shadow"
+        title="Add Option"
+      >
+        <img src="../assets/Buttons/ans/dis_add.png" />
       </button>
     </div>
   </div>
@@ -149,4 +163,8 @@ export default defineComponent({
 [list]::-webkit-calendar-picker-indicator {
   display: none;
 }
+/* img {
+  width: 28px;
+  height: 28px;
+} */
 </style>

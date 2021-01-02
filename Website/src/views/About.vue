@@ -62,7 +62,7 @@
           <center>
             <div class="w3-third">
               <img
-                src="../assets/jayaraman.jpeg"
+                src="../assets/Pictures/jayaraman.jpeg"
                 alt="Boss"
                 style="width:45%"
                 class="w3-circle w3-hover-opacity"
@@ -73,7 +73,7 @@
 
             <div class="w3-third">
               <img
-                src="../assets/gokul.jpg"
+                src="../assets/Pictures/gokul.jpg"
                 alt="Boss"
                 style="width:45%"
                 class="w3-circle w3-hover-opacity"
@@ -84,7 +84,7 @@
 
             <div class="w3-third">
               <img
-                src="../assets/dinesh.jpg"
+                src="../assets/Pictures/dinesh.jpg"
                 alt="Boss"
                 style="width:45%"
                 class="w3-circle w3-hover-opacity"
@@ -154,4 +154,4 @@
   </div>
 </template>
 
-<style scoped src="../assets/w3.css"></style>
+<style scoped src="../assets/Styles/w3.css"></style>

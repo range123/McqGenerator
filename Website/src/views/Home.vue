@@ -32,57 +32,88 @@
               :class="isMcqEmpty ? 'opacity-25' : 'hover:bg-green-600'"
               :disabled="isMcqEmpty"
               @click="toggleAnswer"
-              class="border w-1/4 border-green-500 bg-green-500 text-white font-bold rounded-md px-4 py-2 m-2 transition duration-500 ease select-none  focus:outline-none focus:shadow-outline"
+              :title="!showAnswer ? 'Show Answers' : 'Hide Answers'"
+              class="m-auto rounded-xl focus:outline-none focus:shadow-outline shadow-lg"
             >
-              {{ !showAnswer ? "Show Answers" : "Hide Answers" }}
+              <!-- {{ !showAnswer ? "Show Answers" : "Hide Answers" }} -->
+              <img
+                v-if="!showAnswer"
+                src="../assets/Buttons/ans_show.png"
+                alt="Show Answers"
+              />
+              <img
+                v-else
+                src="../assets/Buttons/ans_hide.png"
+                alt="Hide Answers"
+              />
             </button>
             <button
               :class="isMcqEmpty ? 'opacity-25' : 'hover:bg-gray-800'"
               :disabled="isMcqEmpty"
               @click="toggleEdit"
-              class="border w-1/4 border-gray-700 font-bold bg-gray-700 text-white rounded-md px-4 py-2 m-2 transition duration-500 ease select-none  focus:outline-none focus:shadow-outline"
+              :title="!editMode ? 'Edit' : 'Save'"
+              class="m-auto rounded-xl focus:outline-none focus:shadow-outline shadow-lg"
             >
-              {{ !editMode ? "Edit" : "Save" }}
+              <!-- {{ !editMode ? "Edit" : "Save" }} -->
+              <img
+                v-if="!editMode"
+                src="../assets/Buttons/edit.png"
+                alt="Edit"
+              />
+              <img v-else src="../assets/Buttons/save.png" alt="Save" />
             </button>
             <button
-              :class="isMcqEmpty ? 'opacity-25' : 'hover:bg-indigo-600'"
+              :class="isMcqEmpty ? 'opacity-25' : 'hover:gra'"
               :disabled="isMcqEmpty"
               @click="exportmcqs"
               title="Export as GIFT file"
-              class="border w-1/4 border-indigo-500 bg-indigo-500 text-white font-bold rounded-md px-4 py-2 m-2 transition duration-500 ease select-none  focus:outline-none focus:shadow-outline"
+              class="m-auto rounded-xl focus:outline-none focus:shadow-outline shadow-lg"
             >
-              Export
+              <!-- Export -->
+              <img src="../assets/Buttons/export.png" alt="Export" />
             </button>
             <br />
           </div>
-          <p class="text-center text-gray-600">
-            *Long click to delete a question (Edit Mode)
+          <p class="text-center text-gray-600" v-show="editMode">
+            *Long click to delete a question
           </p>
-          <div id="mcqs">
-            <mcq-component
-              @mousedown="() => handledown(ind)"
-              @mouseleave="handleup"
-              @mouseup="handleup"
-              v-for="(mcq, ind) in mcqs"
-              :key="mcq.id"
-              :qno="ind"
-              class="shadow-sm"
+          <!-- <div id="mcqs"> -->
+          <mcq-component
+            @mousedown="() => handledown(ind)"
+            @mouseleave="handleup"
+            @mouseup="handleup"
+            v-for="(mcq, ind) in mcqs"
+            :key="mcq.id"
+            :qno="ind"
+            class="shadow-sm"
+          >
+          </mcq-component>
+          <!-- </div> -->
+          <div class="w-full flex justify-around p-4">
+            <button
+              :disabled="isMcqEmpty"
+              :class="isMcqEmpty ? 'opacity-25' : ''"
+              @click="clearMcqs"
+              title="Clear MCQs"
+              class="my-5 rounded-xl focus:outline-none focus:shadow-outline shadow-lg"
             >
-            </mcq-component>
-          </div>
-          <div class="w-full flex justify-around">
-            <button @click="clearMcqs" title="Clear MCQs" class="w-16 my-5">
-              <img src="../assets/clearmcqs.png" />
-            </button>
-            <button @click="addMcq" title="Add MCQ" class="w-16 font-bold my-5">
-              <img src="../assets/addmcq.png" />
+              <img src="../assets/Buttons/clear.png" />
             </button>
             <button
+              @click="addMcq"
+              title="Add MCQ"
+              class="my-5 rounded-xl focus:outline-none focus:shadow-outline shadow-lg"
+            >
+              <img src="../assets/Buttons/question_add.png" />
+            </button>
+            <button
+              :disabled="isMcqEmpty"
+              :class="isMcqEmpty ? 'opacity-25' : ''"
               @click="saveMcqsToFile"
               title="Save to file"
-              class="w-16 my-5"
+              class="my-5 rounded-xl focus:outline-none focus:shadow-outline shadow-lg"
             >
-              <img src="../assets/save.png" />
+              <img src="../assets/Buttons/download.png" />
             </button>
           </div>
         </article>
@@ -302,3 +333,10 @@ export default defineComponent({
   }
 });
 </script>
+
+<style scoped>
+/* img {
+  width: 64px;
+  height: 64px;
+} */
+</style>

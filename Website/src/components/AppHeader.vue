@@ -18,13 +18,13 @@
       <div
         class="lg:inline-flex lg:flex-row lg:ml-auto lg:w-auto w-full lg:items-center items-start  flex flex-col lg:h-auto"
       >
-        <button
+        <a
           v-if="deferedPrompt"
           @click="install"
           class="lg:inline-flex lg:w-auto w-full px-3 py-2 rounded text-gray-300 items-center justify-center hover:bg-red-600 hover:text-white"
         >
           <span>Install</span>
-        </button>
+        </a>
         <router-link
           to="/about"
           class="lg:inline-flex lg:w-auto w-full px-3 py-2 rounded text-gray-300 items-center justify-center hover:bg-red-600 hover:text-white"

@@ -10,7 +10,7 @@
         "
         :value="mcq.question"
         :readonly="!editMode"
-        class="bg-gray-100 outline-none w-9/12 "
+        class=" outline-none w-9/12"
         :class="!editMode ? 'cursor-default' : ''"
       />
       <span class="inline-flex" :class="!editMode ? 'invisible' : ''">
@@ -167,4 +167,7 @@ export default defineComponent({
   width: 28px;
   height: 28px;
 } */
+input {
+  background-color: inherit;
+}
 </style>

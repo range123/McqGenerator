@@ -1,6 +1,6 @@
 <template>
   <div class="bg-gray-200 w-full">
-    <div class="flex w-full flex-wrap mt-5">
+    <div class="flex w-full flex-wrap my-5">
       <section class="flex m-auto w-11/12 h-screen">
         <article class="w-1/2 border" @drop.prevent="readfile($event)">
           <textarea
@@ -22,7 +22,7 @@
           G<br />e<br />n<br />e<br />r<br />a<br />t<br />e
         </button>
         <article
-          class="w-1/2 bg-gray-100 border-solid border-black border-2 overflow-auto divide-y-4"
+          class="w-1/2 bg-gray-100 border-solid border-black border-2 overflow-y-auto divide-y-4 overflow-x-hidden"
           @drop.prevent="loadMcqsFromFile($event)"
           @dragenter.prevent=""
           @dragover.prevent=""
@@ -78,18 +78,26 @@
             *Long click to delete a question
           </p>
           <!-- <div id="mcqs"> -->
-          <draggable v-model="mcqs">
-            <mcq-component
-              @mousedown="() => handledown(ind)"
-              @mouseleave="handleup"
-              @mouseup="handleup"
-              @drag="handleup"
-              v-for="(mcq, ind) in mcqs"
-              :key="mcq.id"
-              :qno="ind"
-              class="shadow-sm"
-            >
-            </mcq-component>
+          <draggable
+            v-model="mcqs"
+            class="divide-gray-200 divide-y"
+            ghost-class="ghost"
+            drag-class="drag"
+            chosen-class="chosen"
+          >
+            <transition-group name="list">
+              <mcq-component
+                @mousedown="() => handledown(ind)"
+                @mouseleave="handleup"
+                @mouseup="handleup"
+                @drag="handleup"
+                v-for="(mcq, ind) in mcqs"
+                :key="mcq.id"
+                :qno="ind"
+                class="shadow-sm bg-gray-100"
+              >
+              </mcq-component>
+            </transition-group>
           </draggable>
           <!-- </div> -->
           <div class="w-full flex justify-around p-4">
@@ -344,8 +352,24 @@ export default defineComponent({
 </script>
 
 <style scoped>
-/* img {
-  width: 64px;
-  height: 64px;
+.list-enter-active {
+  transition: all 1s ease;
+}
+.list-leave-active {
+  transition: all 0.5s ease;
+}
+.list-enter-from,
+.list-leave-to {
+  opacity: 0;
+  transform: translateX(30px);
+}
+.ghost {
+  opacity: 25%;
+}
+/* .chosen{
+  border: 3px solid green;
 } */
+.drag {
+  background-color: #e0e0e0;
+}
 </style>

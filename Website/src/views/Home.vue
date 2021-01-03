@@ -1,7 +1,7 @@
 <template>
   <div class="bg-gray-200 w-full">
     <div class="flex w-full flex-wrap my-5">
-      <section class="flex m-auto w-11/12 h-screen">
+      <section class="flex m-auto w-11/12" style="height:54rem;">
         <article class="w-1/2 border" @drop.prevent="readfile($event)">
           <textarea
             class="w-full h-full"
@@ -22,7 +22,7 @@
           G<br />e<br />n<br />e<br />r<br />a<br />t<br />e
         </button>
         <article
-          class="w-1/2 bg-gray-100 border-solid border-black border-2 overflow-y-auto divide-y-4 overflow-x-hidden"
+          class="w-1/2 bg-gray-100 border-solid border-black border-2 divide-y-4"
           @drop.prevent="loadMcqsFromFile($event)"
           @dragenter.prevent=""
           @dragover.prevent=""
@@ -63,7 +63,7 @@
               <img v-else src="../assets/Buttons/save.png" alt="Save" />
             </button>
             <button
-              :class="isMcqEmpty ? 'opacity-25' : 'hover:gra'"
+              :class="isMcqEmpty ? 'opacity-25' : 'hover:bg-indigo-600'"
               :disabled="isMcqEmpty"
               @click="exportmcqs"
               title="Export as GIFT file"
@@ -74,13 +74,13 @@
             </button>
             <br />
           </div>
-          <p class="text-center text-gray-600" v-show="editMode">
-            *Long click to delete a question
+          <p class="text-center text-gray-600" :class="!editMode ? 'invisible' : ''">
+            *Long click to delete a question 
           </p>
           <!-- <div id="mcqs"> -->
           <draggable
             v-model="mcqs"
-            class="divide-gray-200 divide-y"
+            class="divide-gray-200 divide-y overflow-x-hidden overflow-y-auto h-2/3 "
             ghost-class="ghost"
             drag-class="drag"
             chosen-class="chosen"
@@ -100,7 +100,7 @@
             </transition-group>
           </draggable>
           <!-- </div> -->
-          <div class="w-full flex justify-around p-4">
+          <div class="flex justify-around p-4 sticky ">
             <button
               :disabled="isMcqEmpty"
               :class="isMcqEmpty ? 'opacity-25' : ''"

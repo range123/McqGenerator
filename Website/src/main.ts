@@ -4,10 +4,19 @@ import "./registerServiceWorker";
 import router from "./router";
 import store from "./store";
 import "./assets/Styles/index.css";
+import Toast, { PluginOptions, POSITION } from "vue-toastification";
+// Import the CSS or use your own!
+import "vue-toastification/dist/index.css";
 
+const options: PluginOptions = {
+  // You can set your default options here
+  position: POSITION.TOP_CENTER
+};
 const app = createApp(App);
 app.use(store);
 app.use(router);
+
+app.use(Toast, options);
 app.directive("click-outside", {
   beforeMount(el, binding, vnode) {
     el.clickOutsideEvent = function(event: MouseEvent) {

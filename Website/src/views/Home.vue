@@ -126,7 +126,7 @@
 </template>
 
 <script lang="ts">
-import { defineAsyncComponent, defineComponent } from "vue";
+import { defineComponent } from "vue";
 import { Mcq } from "@/types";
 import McqComponent from "@/components/McqComponent.vue";
 import {
@@ -135,6 +135,7 @@ import {
   PDFLoadingTask,
   PDFProgressData
 } from "pdfjs-dist/webpack";
+import { useToast } from "vue-toastification";
 import { VueDraggableNext } from "vue-draggable-next";
 // import HelloWorld from "@/components/HelloWorld.vue"; // @ is an alias to /src
 let getDocument: (
@@ -166,7 +167,7 @@ export default defineComponent({
   data() {
     const isdisabled = false;
     const timer = 0;
-    return { isdisabled, timer };
+    return { isdisabled, timer, Toast: useToast() };
   },
   mounted() {
     (this.$refs.textref as any).focus();
@@ -180,7 +181,7 @@ export default defineComponent({
     async readfile(e: DragEvent) {
       const files = e.dataTransfer?.files ? e.dataTransfer.files : [];
       if (files.length != 1) {
-        window.alert("Accepts only one file");
+        this.Toast.error("Accepts only one file");
         return;
       }
       const file = files[0];
@@ -217,7 +218,7 @@ export default defineComponent({
       } else if (file.type.startsWith("application/pdf")) {
         pdfreader.readAsArrayBuffer(file);
       } else {
-        window.alert("Currently Accepts only PDF and TXT files");
+        this.Toast.warning("Currently Accepts only PDF and TXT files");
       }
     },
     exportmcqs() {
@@ -292,7 +293,7 @@ export default defineComponent({
             const GTHash: string = res.mcqHash;
             if (await this.verifyHash(mcqs, GTHash))
               this.$store.commit("extendMcqs", mcqs);
-            else window.alert("Integrity Check Failed");
+            else this.Toast.error("Integrity Check Failed");
           }
         };
         if (!file.type.startsWith("application/json")) return;

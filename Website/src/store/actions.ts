@@ -2,6 +2,9 @@ import { Mcq, Option, State } from "@/types";
 import axios, { AxiosResponse } from "axios";
 import { v4 as uuidv4 } from "uuid";
 import { ActionContext } from "vuex";
+import { useToast } from "vue-toastification";
+
+const toast = useToast();
 
 function shuffle(array: Option[]): Option[] {
   let currentIndex: number = array.length;
@@ -40,9 +43,9 @@ export async function generateMcqs(
     });
   } catch (error) {
     if (error.response && error.response.status === 422) {
-      window.alert("Atleast 5 words required");
+      toast.error("Atleast 5 words required");
     } else {
-      window.alert("Unexpected Error!");
+      toast.error("Unexpected Error!");
       console.log(error);
     }
     return;

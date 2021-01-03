@@ -7,6 +7,7 @@ import "./assets/Styles/index.css";
 import Toast, { PluginOptions, POSITION } from "vue-toastification";
 // Import the CSS or use your own!
 import "vue-toastification/dist/index.css";
+import PageGuide from "./plugins/Tour/page-guide";
 
 const options: PluginOptions = {
   // You can set your default options here
@@ -15,6 +16,7 @@ const options: PluginOptions = {
 const app = createApp(App);
 app.use(store);
 app.use(router);
+app.use(PageGuide);
 
 app.use(Toast, options);
 app.directive("click-outside", {

@@ -9,7 +9,8 @@ const initState: State = {
   mcqs: [],
   showAnswer: false,
   editMode: false,
-  text: ""
+  text: "",
+  showGuide: false
 };
 export default createStore({
   state: initState,

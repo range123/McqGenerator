@@ -13,4 +13,5 @@ export interface State {
   showAnswer: boolean;
   editMode: boolean;
   text: string;
+  showGuide: boolean;
 }

@@ -58,3 +58,6 @@ export function toggleOptionAnswer(
 export function addOption(state: State, mcqIndex: number) {
   state.mcqs[mcqIndex].options.push({ value: "New Option", isanswer: false });
 }
+export function setGuide(state: State, showGuide: boolean) {
+  state.showGuide = showGuide;
+}

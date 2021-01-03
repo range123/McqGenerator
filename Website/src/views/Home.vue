@@ -2,11 +2,18 @@
   <div class="bg-gray-200 w-full">
     <div class="flex w-full flex-wrap my-5">
       <section class="flex m-auto w-11/12" style="height:54rem;">
-        <article class="w-1/2 border" @drop.prevent="readfile($event)">
+        <article
+          class="w-1/2 border"
+          @drop.prevent="readfile($event)"
+          v-page-guide.left="'You can also Drag & Drop files here!'"
+        >
           <textarea
             class="w-full h-full"
             v-model.trim="text"
             ref="textref"
+            v-page-guide.bottom="
+              'This is where you type text for generating mcqs'
+            "
           ></textarea>
         </article>
         <button
@@ -26,6 +33,9 @@
           @drop.prevent="loadMcqsFromFile($event)"
           @dragenter.prevent=""
           @dragover.prevent=""
+          v-page-guide.bottom="
+            'You can import MCQs by dropping save files (json) here! '
+          "
         >
           <div class="justify-around flex w-full p-4 border-black">
             <button
@@ -34,6 +44,7 @@
               @click="toggleAnswer"
               :title="!showAnswer ? 'Show Answers' : 'Hide Answers'"
               class="m-auto rounded-xl focus:outline-none focus:shadow-outline shadow-lg"
+              v-page-guide.bottom="'For Toggling view answer'"
             >
               <!-- {{ !showAnswer ? "Show Answers" : "Hide Answers" }} -->
               <img
@@ -53,6 +64,7 @@
               @click="toggleEdit"
               :title="!editMode ? 'Edit' : 'Save'"
               class="m-auto rounded-xl focus:outline-none focus:shadow-outline shadow-lg"
+              v-page-guide.bottom="'For Editing MCQs'"
             >
               <!-- {{ !editMode ? "Edit" : "Save" }} -->
               <img
@@ -68,14 +80,18 @@
               @click="exportmcqs"
               title="Export as GIFT file"
               class="m-auto rounded-xl focus:outline-none focus:shadow-outline shadow-lg"
+              v-page-guide.bottom="'For Exporting MCQs'"
             >
               <!-- Export -->
               <img src="../assets/Buttons/export.png" alt="Export" />
             </button>
             <br />
           </div>
-          <p class="text-center text-gray-600" :class="!editMode ? 'invisible' : ''">
-            *Long click to delete a question 
+          <p
+            class="text-center text-gray-600"
+            :class="!editMode ? 'invisible' : ''"
+          >
+            *Long click to delete a question
           </p>
           <!-- <div id="mcqs"> -->
           <draggable
@@ -84,6 +100,9 @@
             ghost-class="ghost"
             drag-class="drag"
             chosen-class="chosen"
+            v-page-guide.bottom="
+              'This is the MCQ workspace, you can rearrange MCQs using drag & drop, delete MCQs on long press'
+            "
           >
             <transition-group name="list">
               <mcq-component
@@ -107,6 +126,7 @@
               @click="clearMcqs"
               title="Clear MCQs"
               class="my-5 rounded-xl focus:outline-none focus:shadow-outline shadow-lg"
+              v-page-guide.bottom="'Clear MCQs '"
             >
               <img src="../assets/Buttons/clear.png" />
             </button>
@@ -114,6 +134,7 @@
               @click="addMcq"
               title="Add MCQ"
               class="my-5 rounded-xl focus:outline-none focus:shadow-outline shadow-lg"
+              v-page-guide.bottom="'Add a MCQ '"
             >
               <img src="../assets/Buttons/question_add.png" />
             </button>
@@ -123,6 +144,9 @@
               @click="saveMcqsToFile"
               title="Save to file"
               class="my-5 rounded-xl focus:outline-none focus:shadow-outline shadow-lg"
+              v-page-guide.bottom="
+                'Generate a Save file which can be imported later'
+              "
             >
               <img src="../assets/Buttons/download.png" />
             </button>
@@ -130,11 +154,12 @@
         </article>
       </section>
     </div>
+    <PageGuide :value="showGuide" @input="showGuide = false" />
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import { defineAsyncComponent, defineComponent } from "vue";
 import { Mcq } from "@/types";
 import McqComponent from "@/components/McqComponent.vue";
 import {
@@ -143,8 +168,8 @@ import {
   PDFLoadingTask,
   PDFProgressData
 } from "pdfjs-dist/webpack";
-import { useToast } from "vue-toastification";
 import { VueDraggableNext } from "vue-draggable-next";
+import { useToast } from "vue-toastification";
 // import HelloWorld from "@/components/HelloWorld.vue"; // @ is an alias to /src
 let getDocument: (
   data: Uint8Array | BufferSource,
@@ -158,7 +183,6 @@ let saveAs: (
   filename?: string,
   disableAutoBOM?: boolean
 ) => void;
-
 const main = async () => {
   getDocument = (await import("pdfjs-dist/webpack")).getDocument;
   hash = (await import("object-hash")).default;
@@ -169,9 +193,11 @@ export default defineComponent({
   name: "Home",
   components: {
     McqComponent,
-    draggable: VueDraggableNext
+    draggable: VueDraggableNext,
+    PageGuide: defineAsyncComponent(() =>
+      import("../plugins/Tour/VPageGuide.vue")
+    )
   },
-
   data() {
     const isdisabled = false;
     const timer = 0;
@@ -322,6 +348,14 @@ export default defineComponent({
     }
   },
   computed: {
+    showGuide: {
+      get() {
+        return this.$store.state.showGuide;
+      },
+      set(g: boolean) {
+        this.$store.commit("setGuide", g);
+      }
+    },
     mcqs: {
       get() {
         return this.$store.state.mcqs;

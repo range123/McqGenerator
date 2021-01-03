@@ -78,16 +78,19 @@
             *Long click to delete a question
           </p>
           <!-- <div id="mcqs"> -->
-          <mcq-component
-            @mousedown="() => handledown(ind)"
-            @mouseleave="handleup"
-            @mouseup="handleup"
-            v-for="(mcq, ind) in mcqs"
-            :key="mcq.id"
-            :qno="ind"
-            class="shadow-sm"
-          >
-          </mcq-component>
+          <draggable v-model="mcqs">
+            <mcq-component
+              @mousedown="() => handledown(ind)"
+              @mouseleave="handleup"
+              @mouseup="handleup"
+              @drag="handleup"
+              v-for="(mcq, ind) in mcqs"
+              :key="mcq.id"
+              :qno="ind"
+              class="shadow-sm"
+            >
+            </mcq-component>
+          </draggable>
           <!-- </div> -->
           <div class="w-full flex justify-around p-4">
             <button
@@ -125,13 +128,14 @@
 <script lang="ts">
 import { defineAsyncComponent, defineComponent } from "vue";
 import { Mcq } from "@/types";
-// import McqComponent from "@/components/McqComponent.vue";
+import McqComponent from "@/components/McqComponent.vue";
 import {
   PDFDataRangeTransport,
   PDFDocumentProxy,
   PDFLoadingTask,
   PDFProgressData
 } from "pdfjs-dist/webpack";
+import { VueDraggableNext } from "vue-draggable-next";
 // import HelloWorld from "@/components/HelloWorld.vue"; // @ is an alias to /src
 let getDocument: (
   data: Uint8Array | BufferSource,
@@ -152,14 +156,13 @@ const main = async () => {
   saveAs = (await import("file-saver")).saveAs;
 };
 main();
-
 export default defineComponent({
   name: "Home",
   components: {
-    McqComponent: defineAsyncComponent(() =>
-      import("@/components/McqComponent.vue")
-    )
+    McqComponent,
+    draggable: VueDraggableNext
   },
+
   data() {
     const isdisabled = false;
     const timer = 0;
@@ -310,8 +313,13 @@ export default defineComponent({
     }
   },
   computed: {
-    mcqs() {
-      return this.$store.state.mcqs;
+    mcqs: {
+      get() {
+        return this.$store.state.mcqs;
+      },
+      set(mcqs: Mcq[]) {
+        this.$store.commit("setMcqs", mcqs);
+      }
     },
     editMode() {
       return this.$store.state.editMode;

@@ -5,11 +5,15 @@
         >Multi-Source MCQ Generator</span
       >
     </router-link>
-    <button class="lg:hidden m-2 focus:outline-none hover:bg-gray-700 rounded-sm shadow-md"
-    @click="() => showBar = !showBar"><img src="../assets/Buttons/hamburger.png" alt="hamburger"></button>
+    <button
+      class="lg:hidden m-2 focus:outline-none hover:bg-gray-700 rounded-sm shadow-md"
+      @click="() => (showBar = !showBar)"
+    >
+      <img src="../assets/Buttons/hamburger.png" alt="hamburger" />
+    </button>
     <div
       class="top-navbar w-full lg:inline-flex lg:flex-grow lg:w-auto "
-      :class="!showBar ? 'hidden':''"
+      :class="!showBar ? 'hidden' : ''"
     >
       <div
         class="lg:inline-flex lg:flex-row lg:ml-auto lg:w-auto w-full lg:items-center items-start  flex flex-col lg:h-auto"
@@ -44,7 +48,7 @@ import { defineComponent } from "vue";
 export default defineComponent({
   name: "AppHeader",
   data() {
-    return { deferedPrompt: null as Event | null, showBar : false };
+    return { deferedPrompt: null as Event | null, showBar: false };
   },
   created() {
     window.addEventListener("beforeinstallprompt", e => {

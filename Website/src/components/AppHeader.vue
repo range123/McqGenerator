@@ -1,13 +1,15 @@
 <template>
-  <nav class="flex  bg-black  flex-wrap ">
+  <nav class="flex  bg-black  flex-wrap justify-between">
     <router-link to="/" class="p-2  items-center ">
-      <span class="p-5 text-xl text-white font-bold uppercase tracking-wide"
+      <span class="lg:p-5 text-xl text-white font-bold uppercase tracking-wide"
         >Multi-Source MCQ Generator</span
       >
     </router-link>
+    <button class="lg:hidden m-2 focus:outline-none hover:bg-gray-700 rounded-sm shadow-md"
+    @click="() => showBar = !showBar"><img src="../assets/Buttons/hamburger.png" alt="hamburger"></button>
     <div
-      class="hidden top-navbar w-full lg:inline-flex lg:flex-grow lg:w-auto "
-      id="navigation"
+      class="top-navbar w-full lg:inline-flex lg:flex-grow lg:w-auto "
+      :class="!showBar ? 'hidden':''"
     >
       <div
         class="lg:inline-flex lg:flex-row lg:ml-auto lg:w-auto w-full lg:items-center items-start  flex flex-col lg:h-auto"
@@ -42,7 +44,7 @@ import { defineComponent } from "vue";
 export default defineComponent({
   name: "AppHeader",
   data() {
-    return { deferedPrompt: null as Event | null };
+    return { deferedPrompt: null as Event | null, showBar : false };
   },
   created() {
     window.addEventListener("beforeinstallprompt", e => {
@@ -60,3 +62,10 @@ export default defineComponent({
   }
 });
 </script>
+
+<style scoped>
+img {
+  width: 28px;
+  height: 28px;
+}
+</style>

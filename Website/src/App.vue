@@ -1,7 +1,9 @@
 <template>
-  <app-header />
-  <div class="w-full flex">
-    <router-view> </router-view>
+  <div class="h-screen bg-gray-200">
+    <app-header />
+    <div class="w-full flex">
+      <router-view> </router-view>
+    </div>
   </div>
 </template>
 

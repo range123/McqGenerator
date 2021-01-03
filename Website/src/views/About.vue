@@ -1,5 +1,5 @@
 <template>
-  <div class="flex m-auto w-10/11 justify-center h-screen">
+  <div class="flex m-auto w-10/11 justify-center h-screen bg-white">
     <title>About</title>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />

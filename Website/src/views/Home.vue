@@ -14,6 +14,8 @@
             v-page-guide.bottom="
               'This is where you type text for generating mcqs'
             "
+            :readonly="isReading"
+            :class="isReading ? 'bg-gray-300 cursor-default' : ''"
           ></textarea>
         </article>
         <button
@@ -170,6 +172,8 @@ import {
 } from "pdfjs-dist/webpack";
 import { VueDraggableNext } from "vue-draggable-next";
 import { useToast } from "vue-toastification";
+import { Worker } from "tesseract.js";
+
 // import HelloWorld from "@/components/HelloWorld.vue"; // @ is an alias to /src
 let getDocument: (
   data: Uint8Array | BufferSource,
@@ -183,10 +187,44 @@ let saveAs: (
   filename?: string,
   disableAutoBOM?: boolean
 ) => void;
+let ocrWorker: Worker;
 const main = async () => {
-  getDocument = (await import("pdfjs-dist/webpack")).getDocument;
-  hash = (await import("object-hash")).default;
-  saveAs = (await import("file-saver")).saveAs;
+  getDocument = (
+    await import(
+      /* webpackPrefetch: true */
+      /* webpackPreload: true */
+      /* webpackChunkName: "PDFjs" */
+      "pdfjs-dist/webpack"
+    )
+  ).getDocument;
+  hash = (
+    await import(
+      /* webpackPrefetch: true */
+      /* webpackChunkName: "Hash" */
+      "object-hash"
+    )
+  ).default;
+  saveAs = (
+    await import(
+      /* webpackPrefetch: true */
+      /* webpackChunkName: "file-saver" */
+      "file-saver"
+    )
+  ).saveAs;
+  const createWorker = (
+    await import(
+      /* webpackPrefetch: true */
+      /* webpackChunkName: "OCR" */
+      "tesseract.js"
+    )
+  ).createWorker;
+  ocrWorker = createWorker({
+    workerPath: "/js/worker.min.js",
+    corePath: "/js/tesseract-core.wasm.js"
+  });
+  await ocrWorker.load();
+  await ocrWorker.loadLanguage("eng");
+  await ocrWorker.initialize("eng");
 };
 main();
 export default defineComponent({
@@ -201,18 +239,24 @@ export default defineComponent({
   data() {
     const isdisabled = false;
     const timer = 0;
-    return { isdisabled, timer, Toast: useToast() };
+    return { isdisabled, timer, Toast: useToast(), isReading: false };
   },
   mounted() {
     (this.$refs.textref as any).focus();
   },
   methods: {
+    async doOcr(file: File) {
+      console.log("In OCR!!");
+      this.text = (await ocrWorker.recognize(file)).data.text;
+      this.isReading = false;
+    },
     async generateMcqs() {
       this.isdisabled = true;
       await this.$store.dispatch("generateMcqs", this.text);
       this.isdisabled = false;
     },
     async readfile(e: DragEvent) {
+      this.isReading = true;
       const files = e.dataTransfer?.files ? e.dataTransfer.files : [];
       if (files.length != 1) {
         this.Toast.error("Accepts only one file");
@@ -221,8 +265,10 @@ export default defineComponent({
       const file = files[0];
       const txtreader = new FileReader();
       txtreader.onload = f => {
-        if (f.target?.result && typeof f.target.result === "string")
+        if (f.target?.result && typeof f.target.result === "string") {
           this.text = f.target.result;
+          this.isReading = false;
+        }
       };
       const getPageText = async (pdf: PDFDocumentProxy, pageNo: number) => {
         const page = await pdf.getPage(pageNo);
@@ -245,14 +291,17 @@ export default defineComponent({
       pdfreader.onload = async f => {
         if (f.target?.result) {
           this.text = await getPDFText(f.target.result);
+          this.isReading = false;
         }
       };
       if (file.type.startsWith("text/")) {
         txtreader.readAsText(file);
       } else if (file.type.startsWith("application/pdf")) {
         pdfreader.readAsArrayBuffer(file);
+      } else if (file.type.startsWith("image/")) {
+        await this.doOcr(file);
       } else {
-        this.Toast.warning("Currently Accepts only PDF and TXT files");
+        this.Toast.warning("Currently Accepts only PDF, Image and TXT files");
       }
     },
     exportmcqs() {

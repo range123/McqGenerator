@@ -26,6 +26,7 @@
           @drop.prevent="readfile($event)"
           v-page-guide.left="'You can also Drag & Drop files here!'"
         >
+          <label for="textid" v-show="false">Text for Generation</label>
           <textarea
             class="w-full h-full"
             v-model.trim="text"
@@ -35,6 +36,7 @@
             "
             :readonly="isReading"
             :class="isReading ? 'bg-gray-300 cursor-default' : ''"
+            id="textid"
           >
           </textarea>
         </article>
@@ -154,7 +156,7 @@
               class="my-5 rounded-xl focus:outline-none focus:shadow-outline shadow-lg"
               v-page-guide.bottom="'Clear MCQs '"
             >
-              <img src="../assets/Buttons/clear.png" />
+              <img src="../assets/Buttons/clear.png" alt="Clear" />
             </button>
             <button
               @click="addMcq"
@@ -162,7 +164,7 @@
               class="my-5 rounded-xl focus:outline-none focus:shadow-outline shadow-lg"
               v-page-guide.bottom="'Add a MCQ '"
             >
-              <img src="../assets/Buttons/question_add.png" />
+              <img src="../assets/Buttons/question_add.png" alt="AddQ" />
             </button>
             <button
               :disabled="isMcqEmpty"
@@ -174,7 +176,7 @@
                 'Generate a Save file which can be imported later'
               "
             >
-              <img src="../assets/Buttons/download.png" />
+              <img src="../assets/Buttons/download.png" alt="Download" />
             </button>
           </div>
         </article>

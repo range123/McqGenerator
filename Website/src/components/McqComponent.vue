@@ -1,13 +1,15 @@
 <template>
   <div class="px-4 justify-start text-lg">
     <div>
-      <span class="w-1/12 cursor-default font-mono">{{ qno + 1 + ". " }}</span
-      ><input
+      <span class="w-1/12 cursor-default font-mono">{{ qno + 1 + ". " }}</span>
+      <label :for="mcq.id + '#'" v-show="false">Question</label>
+      <input
         @input="
           event => {
             handleInput(0, event.target.value);
           }
         "
+        :id="mcq.id + '#'"
         :value="mcq.question"
         :readonly="!editMode"
         class=" outline-none w-9/12"
@@ -19,7 +21,7 @@
           title="Shuffle Options"
           @click="shuffleOptions"
         >
-          <img src="../assets/Buttons/ans/shuffle.png" />
+          <img src="../assets/Buttons/ans/shuffle.png" alt="Shuffle" />
         </button>
       </span>
     </div>
@@ -28,7 +30,9 @@
       <span class="w-1/12 cursor-default font-mono">{{
         String.fromCharCode(65 + ind) + ") "
       }}</span>
+      <label :for="mcq.id + ind" v-show="false">Option</label>
       <input
+        :id="mcq.id + ind"
         :list="mcq.id"
         @input="
           event => {
@@ -63,7 +67,7 @@
           class="focus:outline-none focus:shadow-outline rounded-full shadow ml-1"
           title="Remove Option"
         >
-          <img src="../assets/Buttons/ans/dis_delete.png" />
+          <img src="../assets/Buttons/ans/dis_delete.png" alt="Dis_delete" />
         </button>
       </span>
     </div>
@@ -79,7 +83,7 @@
         class="mt-3 mb-2 ml-4 focus:outline-none focus:shadow-outline rounded-full shadow"
         title="Add Option"
       >
-        <img src="../assets/Buttons/ans/dis_add.png" />
+        <img src="../assets/Buttons/ans/dis_add.png" alt="Dis_add" />
       </button>
     </div>
   </div>

@@ -18,7 +18,9 @@ import { load } from "@tensorflow-models/qna";
 import { useToast } from "vue-toastification";
 let model: any | null = null;
 const main = async () => {
-  model = await load({ modelUrl: "/assets/mobilebert/model.json" });
+  model = await load({
+    modelUrl: "/assets/mobilebert/model.json"
+  });
 };
 main();
 
@@ -45,7 +47,7 @@ export default defineComponent({
           this.question,
           this.text as string
         );
-        if (result) {
+        if (result && result[0]) {
           // this.$emit("answer", { start: result[0].startIndex, end: result[0].endIndex });
           this.$emit("answer", {
             start: result[0].startIndex,

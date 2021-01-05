@@ -6,7 +6,7 @@
           class=" bg-gray-800 flex ml-20 transition-all ease-in"
           @yttext="
             event => {
-              text = event;
+              text = event ? event : text;
               $refs.textref.focus();
             }
           "

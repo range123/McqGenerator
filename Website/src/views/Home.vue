@@ -1,6 +1,17 @@
 <template>
   <div class="bg-gray-200 w-full">
     <div class="flex w-full flex-wrap my-5">
+      <transition-group name="list">
+        <QAComponent
+          class=" bg-gray-800 flex ml-20 transition-all ease-in"
+          @answer="highlightAnswer"
+          style="height:1.5rem;width:20%;"
+          v-if="showQA"
+          @blur="() => (showQA = !showQA)"
+          :text="text"
+        />
+      </transition-group>
+
       <section class="flex m-auto w-11/12" style="height:54rem;">
         <article
           class="w-1/2 border"
@@ -16,7 +27,8 @@
             "
             :readonly="isReading"
             :class="isReading ? 'bg-gray-300 cursor-default' : ''"
-          ></textarea>
+          >
+          </textarea>
         </article>
         <button
           :disabled="isdisabled"
@@ -27,6 +39,11 @@
           class="uppercase text-2xl font-bold border-solid border-black border-2 rounded-md px-4 py-2 m-2 transition duration-500 ease select-none focus:outline-none focus:shadow-outline"
           @click="generateMcqs"
           title="Generate MCQs"
+          @contextmenu.prevent="
+            () => {
+              showQA = !showQA;
+            }
+          "
         >
           G<br />e<br />n<br />e<br />r<br />a<br />t<br />e
         </button>
@@ -120,7 +137,6 @@
               </mcq-component>
             </transition-group>
           </draggable>
-          <!-- </div> -->
           <div class="flex justify-around p-4 sticky ">
             <button
               :disabled="isMcqEmpty"
@@ -234,19 +250,33 @@ export default defineComponent({
     draggable: VueDraggableNext,
     PageGuide: defineAsyncComponent(() =>
       import("../plugins/Tour/VPageGuide.vue")
+    ),
+    QAComponent: defineAsyncComponent(() =>
+      import("../components/QAComponent.vue")
     )
   },
   data() {
     const isdisabled = false;
     const timer = 0;
-    return { isdisabled, timer, Toast: useToast(), isReading: false };
+    return {
+      isdisabled,
+      timer,
+      Toast: useToast(),
+      isReading: false,
+      showQA: false
+    };
   },
   mounted() {
-    (this.$refs.textref as any).focus();
+    const textarea = this.$refs.textref as any;
+    textarea.focus();
   },
   methods: {
+    highlightAnswer(data: { start: number; end: number }) {
+      const textarea = this.$refs.textref as any;
+      textarea.focus();
+      textarea.setSelectionRange(data.start, data.end);
+    },
     async doOcr(file: File) {
-      console.log("In OCR!!");
       this.text = (await ocrWorker.recognize(file)).data.text;
       this.isReading = false;
     },
@@ -454,5 +484,10 @@ export default defineComponent({
 } */
 .drag {
   background-color: #e0e0e0;
+}
+
+textarea::selection {
+  color: #388e3c;
+  font-weight: bold;
 }
 </style>

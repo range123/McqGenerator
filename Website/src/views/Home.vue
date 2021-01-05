@@ -2,13 +2,21 @@
   <div class="bg-gray-200 w-full">
     <div class="flex w-full flex-wrap my-5">
       <transition-group name="list">
-        <QAComponent
+        <YTComponent
           class=" bg-gray-800 flex ml-20 transition-all ease-in"
-          @answer="highlightAnswer"
+          @yttext="
+            event => {
+              text = event;
+              $refs.textref.focus();
+            }
+          "
           style="height:1.5rem;width:20%;"
-          v-if="showQA"
-          @blur="() => (showQA = !showQA)"
-          :text="text"
+          v-if="showYT"
+          @blur="
+            () => {
+              showYT = !showYT;
+            }
+          "
         />
       </transition-group>
 
@@ -41,7 +49,7 @@
           title="Generate MCQs"
           @contextmenu.prevent="
             () => {
-              showQA = !showQA;
+              showYT = !showYT;
             }
           "
         >
@@ -251,8 +259,8 @@ export default defineComponent({
     PageGuide: defineAsyncComponent(() =>
       import("../plugins/Tour/VPageGuide.vue")
     ),
-    QAComponent: defineAsyncComponent(() =>
-      import("../components/QAComponent.vue")
+    YTComponent: defineAsyncComponent(() =>
+      import("../components/YTComponent.vue")
     )
   },
   data() {
@@ -263,7 +271,7 @@ export default defineComponent({
       timer,
       Toast: useToast(),
       isReading: false,
-      showQA: false
+      showYT: false
     };
   },
   mounted() {
@@ -271,11 +279,6 @@ export default defineComponent({
     textarea.focus();
   },
   methods: {
-    highlightAnswer(data: { start: number; end: number }) {
-      const textarea = this.$refs.textref as any;
-      textarea.focus();
-      textarea.setSelectionRange(data.start, data.end);
-    },
     async doOcr(file: File) {
       this.text = (await ocrWorker.recognize(file)).data.text;
       this.isReading = false;
@@ -484,10 +487,5 @@ export default defineComponent({
 } */
 .drag {
   background-color: #e0e0e0;
-}
-
-textarea::selection {
-  color: #388e3c;
-  font-weight: bold;
 }
 </style>

@@ -10,9 +10,6 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
-    "@tensorflow-models/qna": "^1.0.0",
-    "@tensorflow/tfjs-converter": "1.7.4",
-    "@tensorflow/tfjs-core": "1.7.3",
     "@types/file-saver": "^2.0.1",
     "@types/pdfjs-dist": "^2.1.7",
     "@types/uuid": "^8.3.0",

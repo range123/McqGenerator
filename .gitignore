@@ -5,6 +5,8 @@ todo.txt
 **/out*
 **/test*
 **/config.yml
+**/secrets.txt
+**/.deta/
 
 # Node ignores
 .DS_Store

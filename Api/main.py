@@ -73,7 +73,7 @@ class InputModel(BaseModel):
 
 
 # url = "http://localhost:5000/{}"
-url = "http://mcq-generator.eastus.azurecontainer.io:8000/{}"
+url = "http://mcq-generator.southindia.azurecontainer.io:8000/{}"
 
 
 @app.post('/generate_mcqs', tags=['Mcqs'], response_model=List[MCQ])

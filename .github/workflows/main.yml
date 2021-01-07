@@ -27,6 +27,7 @@ jobs:
         platform: python
         platform-version: '3.8'
         source-directory: ./Api
+        output-directory: ./ 
         
 
     - name: 'Deploy to Azure Web App'

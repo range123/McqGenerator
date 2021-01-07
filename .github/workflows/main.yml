@@ -16,7 +16,6 @@ jobs:
         working-directory: ./Api
     steps:
     - uses: actions/checkout@master
-
     - name: Set up Python version
       uses: actions/setup-python@v1
       with:
@@ -27,6 +26,8 @@ jobs:
       with:
         platform: python
         platform-version: '3.8'
+        working-directory: ./Api
+        
 
     - name: 'Deploy to Azure Web App'
       uses: azure/webapps-deploy@v2

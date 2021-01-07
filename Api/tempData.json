@@ -1,0 +1,33 @@
+[
+    {
+      "question": "Is the backend not deployed?",
+      "answer": "Yes",
+      "distractors": [
+        "No",
+        "Definitely Not",
+        "Obviously"
+      ]
+    },
+    {
+      "question": "Is the backend being tested?",
+      "answer": "sure",
+      "distractors": []
+    },
+    {
+      "question": "Is this a dummy backend?",
+      "answer": "Obviously",
+      "distractors": [
+        "No",
+        "Nah",
+        "Bruh",
+        "Yes"
+      ]
+    },
+    {
+      "question": "Is this a PWA",
+      "answer": "Ofcourse",
+      "distractors": [
+        "No"
+      ]
+    }
+  ]

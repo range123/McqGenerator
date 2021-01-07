@@ -1,17 +1,9 @@
-**/__pycache__
-todo.txt
-**/.venv
-**/saved_models/*
-**/out*
-**/test*
-**/config.yml
-**/secrets.txt
-**/.deta/
-
-# Node ignores
 .DS_Store
 node_modules
 /dist
+
+/tests/e2e/videos/
+/tests/e2e/screenshots/
 
 
 # local env files

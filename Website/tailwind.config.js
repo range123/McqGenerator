@@ -1,12 +1,11 @@
 module.exports = {
-  future: {
-    // removeDeprecatedGapUtilities: true,
-    // purgeLayersByDefault: true,
-  },
-  purge: ['./src/pages/*', './src/components/*'],
+  purge: ["./index.html", "./src/**/*.{vue,js,ts,jsx,tsx}"],
+  darkMode: false, // or 'media' or 'class'
   theme: {
-    extend: {},
+    extend: {}
   },
-  variants: {},
-  plugins: [],
-}
+  variants: {
+    extend: {}
+  },
+  plugins: []
+};

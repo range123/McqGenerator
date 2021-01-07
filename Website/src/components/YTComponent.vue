@@ -34,7 +34,7 @@ export default defineComponent({
         if (ampersandPosition != -1) {
           temp = temp.substring(0, ampersandPosition);
         }
-        const url = "https://5evt4e.deta.dev/get_captions/";
+        const url = "https://mcq-generator.azurewebsites.net/get_captions/";
         try {
           const text = await axios.get(url + temp);
           if (text.data === "<no captions found>") {

@@ -63,7 +63,7 @@
             <div class="w3-third">
               <img
                 src="../assets/Pictures/jayaraman.jpeg"
-                alt="Boss"
+                alt="Jayaraman"
                 style="width:45%"
                 class="w3-circle w3-hover-opacity"
               />
@@ -74,7 +74,7 @@
             <div class="w3-third">
               <img
                 src="../assets/Pictures/gokul.jpg"
-                alt="Boss"
+                alt="Gokul"
                 style="width:45%"
                 class="w3-circle w3-hover-opacity"
               />
@@ -85,7 +85,7 @@
             <div class="w3-third">
               <img
                 src="../assets/Pictures/dinesh.jpg"
-                alt="Boss"
+                alt="Dinesh"
                 style="width:45%"
                 class="w3-circle w3-hover-opacity"
               />
@@ -106,7 +106,7 @@
               ><i class="fa fa-github"></i
             ></a>
             <a
-              class="w3-button w3-large w3-hide-small"
+              class="w3-button w3-large"
               href="https://www.linkedin.com/in/jayaraman-n-r-884818193/"
               title="Linkedin"
               ><i class="fa fa-linkedin"></i
@@ -120,7 +120,7 @@
               ><i class="fa fa-github"></i
             ></a>
             <a
-              class="w3-button w3-large w3-hide-small"
+              class="w3-button w3-large"
               href="https://www.linkedin.com/in/gokulsahar/"
               title="Linkedin"
               ><i class="fa fa-linkedin"></i
@@ -131,7 +131,7 @@
               ><i class="fa fa-github"></i
             ></a>
             <a
-              class="w3-button w3-large w3-hide-small"
+              class="w3-button w3-large"
               href="javascript:void(0)"
               title="Linkedin"
               ><i class="fa fa-linkedin"></i
@@ -144,7 +144,7 @@
           class="w3-tooltip w3-right"
         >
           <span class="w3-text w3-padding w3-hide-small">Go To Top</span>
-          <a class="w3-button w3-theme" href="#myPage"
+          <a class="w3-button w3-theme" @click.prevent="scrollTop"
             ><span class="w3-xlarge">
               <i class="fa fa-chevron-circle-up"></i></span
           ></a>
@@ -153,5 +153,18 @@
     </div>
   </div>
 </template>
+
+<script lang="ts">
+import { defineComponent } from "vue";
+
+export default defineComponent({
+  name: "About",
+  methods: {
+    async scrollTop(){
+      window.scrollTo(0,0)
+    }
+  }
+})
+</script>
 
 <style scoped src="../assets/Styles/w3.css"></style>

@@ -160,11 +160,11 @@ import { defineComponent } from "vue";
 export default defineComponent({
   name: "About",
   methods: {
-    async scrollTop(){
-      window.scrollTo(0,0)
+    async scrollTop() {
+      window.scrollTo(0, 0);
     }
   }
-})
+});
 </script>
 
 <style scoped src="../assets/Styles/w3.css"></style>

@@ -103,17 +103,48 @@
               />
               <img v-else src="../assets/Buttons/save.png" alt="Save" />
             </button>
-            <button
+            <!-- <button
               :class="isMcqEmpty ? 'opacity-25' : 'hover:bg-indigo-600'"
               :disabled="isMcqEmpty"
               @click="exportmcqs"
               title="Export as GIFT file"
               class="m-auto rounded-xl focus:outline-none focus:shadow-outline shadow-lg"
               v-page-guide.bottom="'For Exporting MCQs'"
-            >
-              <!-- Export -->
-              <img src="../assets/Buttons/export.png" alt="Export" />
-            </button>
+            > -->
+            <!-- Export -->
+            <!-- <img src="../assets/Buttons/export.png" alt="Export" />
+            </button> -->
+            <div class="dropdown inline-block relative m-auto">
+              <button
+                class="m-auto rounded-xl focus:outline-none focus:shadow-outline shadow-lg inline-flex items-center"
+                :class="isMcqEmpty ? 'opacity-25' : 'hover:bg-indigo-600'"
+                :disabled="isMcqEmpty"
+                title="Export MCQs"
+                v-page-guide.bottom="'For Exporting MCQs'"
+              >
+                <span
+                  ><img src="../assets/Buttons/export.png" alt="Export"
+                /></span>
+              </button>
+              <ul
+                class="dropdown-content absolute hidden text-gray-700 pt-1 divide-x-2"
+              >
+                <li>
+                  <a
+                    class="rounded-t bg-gray-200 hover:bg-gray-400 px-4 block whitespace-no-wrap cursor-pointer"
+                    @click="exportmcqs"
+                    >GIFT</a
+                  >
+                </li>
+                <li>
+                  <a
+                    class="bg-gray-200 hover:bg-gray-400 px-4 block whitespace-no-wrap cursor-pointer"
+                    @click="exportToPdf"
+                    >PDF</a
+                  >
+                </li>
+              </ul>
+            </div>
             <br />
           </div>
           <p
@@ -166,7 +197,7 @@
             >
               <img src="../assets/Buttons/question_add.png" alt="AddQ" />
             </button>
-            <button
+            <!-- <button
               :disabled="isMcqEmpty"
               :class="isMcqEmpty ? 'opacity-25' : ''"
               @click="saveMcqsToFile"
@@ -177,7 +208,40 @@
               "
             >
               <img src="../assets/Buttons/download.png" alt="Download" />
-            </button>
+            </button> -->
+            <div class="dropdown inline-block relative my-5">
+              <button
+                :disabled="isMcqEmpty"
+                :class="isMcqEmpty ? 'opacity-25' : ''"
+                class="rounded-xl focus:outline-none focus:shadow-outline shadow-lg inline-flex items-center"
+                title="Save to file"
+                v-page-guide.bottom="
+                  'Generate a Save file which can be imported later'
+                "
+              >
+                <span
+                  ><img src="../assets/Buttons/download.png" alt="Download"
+                /></span>
+              </button>
+              <ul
+                class="dropdown-content absolute hidden text-gray-700 pt-1 divide-x-2"
+              >
+                <li>
+                  <a
+                    class="rounded-t bg-gray-200 hover:bg-gray-400 px-4 block whitespace-no-wrap cursor-pointer"
+                    @click="saveMcqsToFile"
+                    >Local</a
+                  >
+                </li>
+                <li>
+                  <a
+                    class="bg-gray-200 hover:bg-gray-400 px-4 block whitespace-no-wrap cursor-pointer"
+                    @click="uploadJson"
+                    >Cloud</a
+                  >
+                </li>
+              </ul>
+            </div>
           </div>
         </article>
       </section>
@@ -199,6 +263,12 @@ import {
 import { VueDraggableNext } from "vue-draggable-next";
 import { useToast } from "vue-toastification";
 import { Worker } from "tesseract.js";
+import axios from "axios";
+import copy from "clipboard-copy";
+
+import pdfMake from "pdfmake/build/pdfmake";
+import pdfFonts from "pdfmake/build/vfs_fonts";
+pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
 // import HelloWorld from "@/components/HelloWorld.vue"; // @ is an alias to /src
 let getDocument: (
@@ -214,7 +284,24 @@ let saveAs: (
   disableAutoBOM?: boolean
 ) => void;
 let ocrWorker: Worker;
+// let pdfMake: any;
+// let pdfFonts: any;
 const main = async () => {
+  // pdfMake = (await import(
+  //   /* webpackPrefetch: true */
+  //   /* webpackPreload: true */
+  //   /* webpackChunkName: "PdfMake" */
+  //   "pdfmake/build/pdfmake"
+  // ));
+  // pdfFonts = (
+  //   await import(
+  //     /* webpackPrefetch: true */
+  //     /* webpackPreload: true */
+  //     /* webpackChunkName: "PdfFonts" */
+  //     "pdfmake/build/vfs_fonts"
+  //   )
+  // );
+
   getDocument = (
     await import(
       /* webpackPrefetch: true */
@@ -281,6 +368,27 @@ export default defineComponent({
     textarea.focus();
   },
   methods: {
+    async uploadJson() {
+      const mcqHash = await this.getHash(this.mcqs);
+      const data = { mcqs: this.mcqs, mcqHash };
+      try {
+        await axios.put(
+          "https://api.jsonbin.io/v3/b/605737777ffeba41c07f4243",
+          data,
+          {
+            headers: {
+              "content-type": "application/json",
+              "X-Bin-Versioning": false
+            }
+          }
+        );
+      } catch (error) {
+        this.Toast.error("Failed to upload Mcqs");
+        return;
+      }
+      await copy("https://api.jsonbin.io/b/605737777ffeba41c07f4243/latest");
+      this.Toast.info("Synced Mcqs with cloud, link copied to clipboard");
+    },
     async doOcr(file: File) {
       this.text = (await ocrWorker.recognize(file)).data.text;
       this.isReading = false;
@@ -337,7 +445,62 @@ export default defineComponent({
         await this.doOcr(file);
       } else {
         this.Toast.warning("Currently Accepts only PDF, Image and TXT files");
+        this.isReading = false;
       }
+    },
+    async exportToPdf() {
+      const styles = {
+        question: {
+          margin: [15, 10, 5, 10] as [number, number, number, number],
+          bold: true,
+          fontSize: 18
+        },
+        answer: {
+          margin: [30, 0, 5, 0] as [number, number, number, number],
+          bold: true,
+          color: "#4CAF50",
+          fontSize: 16
+        },
+        option: {
+          margin: [30, 0, 5, 0] as [number, number, number, number],
+          fontSize: 16
+        },
+        heading: {
+          fontSize: 24,
+          bold: true,
+          alignment: "center" as
+            | "center"
+            | "left"
+            | "right"
+            | "justify"
+            | undefined,
+          margin: [0, 0, 0, 30] as [number, number, number, number]
+        }
+      };
+      const content = [
+        {
+          text: "Questions Generated By Mcq Generator",
+          style: "heading"
+        }
+      ] as any;
+      this.mcqs.forEach((mcq, ind) => {
+        content.push({
+          text: `${ind + 1}. ${mcq.question}`,
+          style: "question"
+        });
+        mcq.options.forEach((option, ind) => {
+          const style = option.isanswer ? "answer" : "option";
+          content.push({
+            text: `${String.fromCharCode(65 + ind)}) ${option.value}`,
+            style
+          });
+        });
+      });
+      const doc = {
+        content,
+        styles
+      };
+      pdfMake.createPdf(doc).download("MCQs.pdf");
     },
     exportmcqs() {
       function exportmcq(qno: number, mcq: Mcq) {
@@ -365,7 +528,7 @@ export default defineComponent({
     },
     handledown(ind: number) {
       if (this.editMode) {
-        this.timer = setTimeout(() => {
+        this.timer = window.setTimeout(() => {
           this.deleteMcq(ind);
         }, 1000);
       }
@@ -489,5 +652,8 @@ export default defineComponent({
 } */
 .drag {
   background-color: #e0e0e0;
+}
+.dropdown:hover > .dropdown-content {
+  display: block;
 }
 </style>

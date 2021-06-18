@@ -39,7 +39,7 @@
         <center>
           <h6>
             <a
-              href="https://www.overleaf.com/project/5f8628c048052f0001387df7"
+              href="https://firebasestorage.googleapis.com/v0/b/birthdayapp-34806.appspot.com/o/OtherFiles%2FMCQ%20Generation%20Using%20Text%20Transformers.pdf?alt=media&token=2a623e54-e422-4fec-a14e-1c0d721ff0b9"
               class="text-blue-500 underline"
               >More About This Project</a
             >

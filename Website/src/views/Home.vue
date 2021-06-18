@@ -127,7 +127,8 @@
                 /></span>
               </button>
               <ul
-                class="dropdown-content absolute hidden text-gray-700 pt-1 divide-x-2"
+                class="absolute hidden text-gray-700 pt-1 divide-x-2"
+                :class="isMcqEmpty ? '' : 'dropdown-content'"
               >
                 <li>
                   <a
@@ -224,7 +225,8 @@
                 /></span>
               </button>
               <ul
-                class="dropdown-content absolute hidden text-gray-700 pt-1 divide-x-2"
+                class="absolute hidden text-gray-700 pt-1 divide-x-2"
+                :class="isMcqEmpty ? '' : 'dropdown-content'"
               >
                 <li>
                   <a
